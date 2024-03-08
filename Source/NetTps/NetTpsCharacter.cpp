@@ -269,7 +269,8 @@ void ANetTpsCharacter::Fire()
 {
 	// 총을 들고 있지 않으면 함수를 나가자
 	// 총알이 0개면 함수를 나가자
-	if (closestPistol == nullptr || currBulletCnt <= 0) return;
+	// 재장전 중에는 함수를 나가자
+	if (closestPistol == nullptr || currBulletCnt <= 0 || isReloading) return;
 
 	FHitResult hitInfo;
 	FVector startPos = FollowCamera->GetComponentLocation();
@@ -296,10 +297,14 @@ void ANetTpsCharacter::Fire()
 void ANetTpsCharacter::Reload()
 {
 	// 총을 들고 있지 않으면 함수를 나가자
-	if (closestPistol == nullptr) return;	
+	// 재장전 중이면 함수를 나가자
+	if (closestPistol == nullptr || isReloading) return;	
 
 	// 재장전 애니메이션 실행
 	PlayAnimMontage(pistolMontage, 1.0f, FName(TEXT("Reload")));
+
+	// 재장전 중
+	isReloading = true;
 }
 
 void ANetTpsCharacter::ReloadComplete()
@@ -310,4 +315,7 @@ void ANetTpsCharacter::ReloadComplete()
 		mainWidget->AddBullet();
 
 	currBulletCnt = maxBulletCnt;
+
+	// 재장전 완료
+	isReloading = false;
 }

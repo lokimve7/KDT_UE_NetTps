@@ -35,4 +35,8 @@ public:
 	UPROPERTY()
 	class ANetTpsCharacter* player;
 
+	UPROPERTY(BlueprintReadOnly)
+	float pitchAngle;
+
+
 };

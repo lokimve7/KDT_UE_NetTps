@@ -116,5 +116,6 @@ public:
 
 	int32 maxBulletCnt = 10;
 	int32 currBulletCnt = 0;
+	bool isReloading = false;
 };
 

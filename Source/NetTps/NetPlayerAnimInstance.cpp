@@ -24,6 +24,13 @@ void UNetPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		// аб ©Л (dirH)
 		dirH = FVector::DotProduct(player->GetActorRightVector(), player->GetVelocity());
+
+		//0 ~ 360 --> -180 ~ 180
+		pitchAngle = -player->GetBaseAimRotation().Pitch;
+		UE_LOG(LogTemp, Warning, TEXT("anlge : %f"), pitchAngle);
+
+		pitchAngle = -player->GetBaseAimRotation().GetNormalized().Pitch;
+		UE_LOG(LogTemp, Warning, TEXT("anlge normailized : %f"), pitchAngle);
 	}	
 }
 
