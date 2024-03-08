@@ -47,6 +47,9 @@ class ANetTpsCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* TakePistolAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* FireAction;
+
 public:
 	ANetTpsCharacter();
 	
@@ -63,6 +66,8 @@ protected:
 	void AttachPistol();
 	void DetachPistol();
 
+	void Fire();
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -77,6 +82,9 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 public:
+	UPROPERTY()
+	class UNetPlayerAnimInstance* anim;
+
 	UPROPERTY(EditAnywhere)
 	class USceneComponent* compGun;
 
@@ -88,5 +96,8 @@ public:
 
 	UPROPERTY()
 	AActor* closestPistol;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* pistolEffect;
 };
 

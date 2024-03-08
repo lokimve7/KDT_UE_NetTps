@@ -24,6 +24,5 @@ void UNetPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		// аб ©Л (dirH)
 		dirH = FVector::DotProduct(player->GetActorRightVector(), player->GetVelocity());
-
 	}	
 }

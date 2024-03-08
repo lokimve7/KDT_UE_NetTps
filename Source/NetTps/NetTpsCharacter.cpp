@@ -59,6 +59,7 @@ ANetTpsCharacter::ANetTpsCharacter()
 	compGun->SetRelativeLocation(FVector(-7.144f, 3.68f, 4.136f));
 	compGun->SetRelativeRotation(FRotator(3.4f, 75.699f, 6.6424f));
 
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -76,6 +77,9 @@ void ANetTpsCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	// AnimInstance 가져오자
+	anim = Cast<UNetPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 
 	// 1. 바닥에 깔려있는 Pistol 을 찾자.
 	TArray<AActor*> allActor;
@@ -109,6 +113,9 @@ void ANetTpsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		// 총 잡기
 		EnhancedInputComponent->BindAction(TakePistolAction, ETriggerEvent::Started, this, &ANetTpsCharacter::TakePistol);
+
+		// 총 쏘기
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &ANetTpsCharacter::Fire);
 
 	}
 	else
@@ -202,8 +209,15 @@ void ANetTpsCharacter::AttachPistol()
 	closestPistol->AttachToComponent(compGun, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
 	// animInstance 에 있는 hasPistol 을 true
-	auto anim = Cast<UNetPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	anim->hasPistol = true;
+
+	// bOrientRotaionToMovement 꺼주자
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	// RotationYaw 켜주자
+	bUseControllerRotationYaw = true;
+	// SprintArm 위치 바꿔주자
+	CameraBoom->TargetArmLength = 100;
+	CameraBoom->SetRelativeLocation(FVector(-4.33f, 33.8f, 70));
 }
 
 void ANetTpsCharacter::DetachPistol()
@@ -214,6 +228,32 @@ void ANetTpsCharacter::DetachPistol()
 	// closestPistol 을 compGun 떨어져 나가자
 	closestPistol->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 	// animInstance 에 있는 hasPistol 을 false
-	auto anim = Cast<UNetPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	anim->hasPistol = false;
+
+	// bOrientRotaionToMovement 켜주자
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	// RotationYaw 꺼주자
+	bUseControllerRotationYaw = false;
+	// SprintArm 위치 바꿔주자
+	CameraBoom->TargetArmLength = 400;
+	CameraBoom->SetRelativeLocation(FVector::ZeroVector);
+}
+
+void ANetTpsCharacter::Fire()
+{
+	// 총을 들고 있지 않으면 함수를 나가자
+	if (closestPistol == nullptr) return;
+
+	FHitResult hitInfo;
+	FVector startPos = FollowCamera->GetComponentLocation();
+	FVector endPos = startPos + FollowCamera->GetForwardVector() * 100000;
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+
+	bool isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECollisionChannel::ECC_Visibility, params);
+
+	if (isHit)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), pistolEffect, hitInfo.ImpactPoint, FRotator::ZeroRotator, true);
+	}
 }
