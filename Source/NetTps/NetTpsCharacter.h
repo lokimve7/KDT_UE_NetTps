@@ -107,5 +107,8 @@ public:
 	TSubclassOf<class UMainWidget> mainWidgetFactory;
 	UPROPERTY()
 	class UMainWidget* mainWidget;
+
+	int32 maxBulletCnt = 10;
+	int32 currBulletCnt = 0;
 };
 

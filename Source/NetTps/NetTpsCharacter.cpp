@@ -97,6 +97,9 @@ void ANetTpsCharacter::BeginPlay()
 	mainWidget = Cast<UMainWidget>(CreateWidget(GetWorld(), mainWidgetFactory));
 	mainWidget->AddToViewport();
 	mainWidget->ShowPistolUI(false);
+
+	// 총알 초기 설정
+	currBulletCnt = maxBulletCnt;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -254,7 +257,8 @@ void ANetTpsCharacter::DetachPistol()
 void ANetTpsCharacter::Fire()
 {
 	// 총을 들고 있지 않으면 함수를 나가자
-	if (closestPistol == nullptr) return;
+	// 총알이 0개면 함수를 나가자
+	if (closestPistol == nullptr || currBulletCnt <= 0) return;
 
 	FHitResult hitInfo;
 	FVector startPos = FollowCamera->GetComponentLocation();
@@ -271,4 +275,7 @@ void ANetTpsCharacter::Fire()
 
 	// 총 쏘는 애니메이션 실행
 	PlayAnimMontage(pistolMontage, 2.0f, FName(TEXT("Fire")));
+
+	// 총알 하나 사용!
+	currBulletCnt--;
 }
