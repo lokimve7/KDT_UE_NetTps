@@ -13,6 +13,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "NetPlayerAnimInstance.h"
+#include "MainWidget.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -91,6 +92,11 @@ void ANetTpsCharacter::BeginPlay()
 			allPistol.Add(allActor[i]);
 		}
 	}
+
+	// Main Widget 생성
+	mainWidget = Cast<UMainWidget>(CreateWidget(GetWorld(), mainWidgetFactory));
+	mainWidget->AddToViewport();
+	mainWidget->ShowPistolUI(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -218,6 +224,9 @@ void ANetTpsCharacter::AttachPistol()
 	// SprintArm 위치 바꿔주자
 	CameraBoom->TargetArmLength = 100;
 	CameraBoom->SetRelativeLocation(FVector(-4.33f, 33.8f, 70));
+
+	//Pistol UI 보이게 하자
+	mainWidget->ShowPistolUI(true);
 }
 
 void ANetTpsCharacter::DetachPistol()
@@ -237,6 +246,9 @@ void ANetTpsCharacter::DetachPistol()
 	// SprintArm 위치 바꿔주자
 	CameraBoom->TargetArmLength = 400;
 	CameraBoom->SetRelativeLocation(FVector::ZeroVector);
+
+	//Pistol UI 보이지 않게 하자
+	mainWidget->ShowPistolUI(false);
 }
 
 void ANetTpsCharacter::Fire()
@@ -256,4 +268,7 @@ void ANetTpsCharacter::Fire()
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), pistolEffect, hitInfo.ImpactPoint, FRotator::ZeroRotator, true);
 	}
+
+	// 총 쏘는 애니메이션 실행
+	PlayAnimMontage(pistolMontage, 2.0f, FName(TEXT("Fire")));
 }

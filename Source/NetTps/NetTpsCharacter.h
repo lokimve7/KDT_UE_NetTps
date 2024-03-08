@@ -99,5 +99,13 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* pistolEffect;
+
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* pistolMontage;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UMainWidget> mainWidgetFactory;
+	UPROPERTY()
+	class UMainWidget* mainWidget;
 };
 
