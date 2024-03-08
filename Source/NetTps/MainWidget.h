@@ -18,6 +18,14 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UImage* crosshair;
 
+	UPROPERTY(meta = (BindWidget))
+	class UHorizontalBox* bulletPanel;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> bulletFactory;
+
 public:
 	void ShowPistolUI(bool isShow);
+	void AddBullet();
+	void RemoveBullet();
 };

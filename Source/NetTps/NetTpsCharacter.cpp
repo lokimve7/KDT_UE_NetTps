@@ -98,8 +98,16 @@ void ANetTpsCharacter::BeginPlay()
 	mainWidget->AddToViewport();
 	mainWidget->ShowPistolUI(false);
 
-	// 총알 초기 설정
-	currBulletCnt = maxBulletCnt;
+
+	//// 총알 초기 설정
+	//currBulletCnt = maxBulletCnt;
+
+	//// 총알 UI 초기 설정
+	//for (int32 i = 0; i < maxBulletCnt; i++)
+	//{
+	//	mainWidget->AddBullet();
+	//}
+	ReloadComplete();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -125,6 +133,9 @@ void ANetTpsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		// 총 쏘기
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &ANetTpsCharacter::Fire);
+
+		// 재장전
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &ANetTpsCharacter::Reload);
 
 	}
 	else
@@ -278,4 +289,25 @@ void ANetTpsCharacter::Fire()
 
 	// 총알 하나 사용!
 	currBulletCnt--;
+	// 총알 UI 하나 제거
+	mainWidget->RemoveBullet();
+}
+
+void ANetTpsCharacter::Reload()
+{
+	// 총을 들고 있지 않으면 함수를 나가자
+	if (closestPistol == nullptr) return;	
+
+	// 재장전 애니메이션 실행
+	PlayAnimMontage(pistolMontage, 1.0f, FName(TEXT("Reload")));
+}
+
+void ANetTpsCharacter::ReloadComplete()
+{
+	// UI 에 추가해야 하는 총알 갯수
+	int32 addBulletCnt = maxBulletCnt - currBulletCnt;
+	for (int32 i = 0; i < addBulletCnt; i++)
+		mainWidget->AddBullet();
+
+	currBulletCnt = maxBulletCnt;
 }

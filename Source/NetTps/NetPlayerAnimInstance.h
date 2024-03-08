@@ -19,6 +19,9 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	UFUNCTION()
+	void AnimNotify_ReloadComplete();
+
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	bool hasPistol;

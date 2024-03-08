@@ -50,6 +50,9 @@ class ANetTpsCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FireAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ReloadAction;
+
 public:
 	ANetTpsCharacter();
 	
@@ -66,7 +69,10 @@ protected:
 	void AttachPistol();
 	void DetachPistol();
 
+public:
 	void Fire();
+	void Reload();
+	void ReloadComplete();
 
 protected:
 	// APawn interface
