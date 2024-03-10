@@ -37,6 +37,4 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	float pitchAngle;
-
-
 };
