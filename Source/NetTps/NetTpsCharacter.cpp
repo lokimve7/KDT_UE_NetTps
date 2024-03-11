@@ -98,11 +98,14 @@ void ANetTpsCharacter::BeginPlay()
 			allPistol.Add(allActor[i]);
 		}
 	}
-
-	// Main Widget 생성
-	mainWidget = Cast<UMainWidget>(CreateWidget(GetWorld(), mainWidgetFactory));
-	mainWidget->AddToViewport();
-	mainWidget->ShowPistolUI(false);
+	// 만약에 나의 Local Player 라면
+	//if (IsLocallyControlled())
+	{
+		// Main Widget 생성
+		mainWidget = Cast<UMainWidget>(CreateWidget(GetWorld(), mainWidgetFactory));
+		mainWidget->AddToViewport();
+		mainWidget->ShowPistolUI(false);
+	}
 
 
 	//// 총알 초기 설정
@@ -127,14 +130,34 @@ void ANetTpsCharacter::PrintNetLog()
 {
 	// Connection 상태
 	FString conStr = GetNetConnection() != nullptr ? TEXT("Valid Connect") : TEXT("InValid Connect");
-	
-	DrawDebugString(GetWorld(), GetActorLocation(), conStr, nullptr, FColor::Yellow, 0, true, 1.0);
+	// 나의 주인 Actor
+	FString ownerStr = GetOwner() != nullptr ? GetOwner()->GetName() : TEXT("No Owner");
+	// Role
+	// ROLE_Authority : 모든 권한을 다 갖고 있다 (로직 구현)
+	// ROLE_AutonomousProxy : 제어 (Input) 만 가능하다.
+	// ROLE_SimulatedProxy : 보기만 (시뮬레이션만) 가능한다.
+	FString localRoleStr = UEnum::GetValueAsString<ENetRole>(GetLocalRole());
+	FString remoteRoleStr = UEnum::GetValueAsString<ENetRole>(GetRemoteRole());
+		
+	FString log = FString::Printf(TEXT("Connection : %s\nOwner Name : %s\nLocalRole : %s\nRemoteRole : %s"), 
+	*conStr, *ownerStr, *localRoleStr, *remoteRoleStr);
+
+	DrawDebugString(
+		GetWorld(), 
+		GetActorLocation() + FVector::UpVector * 100, 
+		log, 
+		nullptr, 
+		FColor::Yellow, 
+		0, 
+		true, 
+		1.0);
 }
 
 void ANetTpsCharacter::DamageProcess()
 {
 	// 현재 HP 줄이자
 	currHP -= 10;
+
 	// compHP 에 셋팅되어 있는 HealthBar 를 가져오자
 	UHealthBar* healthbar = Cast<UHealthBar>(compHP->GetWidget());
 	// 가져온 HealtBar 의 함수 UpdateHealthBar 호출
