@@ -116,6 +116,21 @@ void ANetTpsCharacter::BeginPlay()
 	ReloadComplete();
 }
 
+void ANetTpsCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	PrintNetLog();
+}
+
+void ANetTpsCharacter::PrintNetLog()
+{
+	// Connection 상태
+	FString conStr = GetNetConnection() != nullptr ? TEXT("Valid Connect") : TEXT("InValid Connect");
+	
+	DrawDebugString(GetWorld(), GetActorLocation(), conStr, nullptr, FColor::Yellow, 0, true, 1.0);
+}
+
 void ANetTpsCharacter::DamageProcess()
 {
 	// 현재 HP 줄이자
@@ -124,6 +139,13 @@ void ANetTpsCharacter::DamageProcess()
 	UHealthBar* healthbar = Cast<UHealthBar>(compHP->GetWidget());
 	// 가져온 HealtBar 의 함수 UpdateHealthBar 호출
 	healthbar->UpdateHealthBar(currHP, maxHP);
+
+	// 만약에 현재 HP 가 0이면
+	if (currHP <= 0)
+	{
+		// 죽음처리
+		anim->isDeath = true;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

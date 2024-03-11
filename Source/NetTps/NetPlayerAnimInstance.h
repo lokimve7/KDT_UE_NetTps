@@ -37,4 +37,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	float pitchAngle;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool isDeath = false;
 };
