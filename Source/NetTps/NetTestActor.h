@@ -23,7 +23,24 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* compMesh;
+
+	//UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_RotYaw)
+	float rotYaw = 0;	
+	UFUNCTION()
+	void OnRep_RotYaw();
+
+	
+
+
+
+public:
+	void PrintNetLog();
+
+
 };

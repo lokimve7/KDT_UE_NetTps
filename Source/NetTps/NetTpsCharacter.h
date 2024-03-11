@@ -84,7 +84,7 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 	void PrintNetLog();
-
+	
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

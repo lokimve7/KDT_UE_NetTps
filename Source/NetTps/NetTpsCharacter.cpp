@@ -84,7 +84,7 @@ void ANetTpsCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-
+	
 	// AnimInstance 가져오자
 	anim = Cast<UNetPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 
