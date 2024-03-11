@@ -36,6 +36,10 @@ public:
 	void OnRep_RotYaw();
 
 	
+	bool bScale = true;
+	UPROPERTY(Replicated)
+	FVector scaleValue = FVector::ZeroVector;
+	void TestScale();
 
 
 

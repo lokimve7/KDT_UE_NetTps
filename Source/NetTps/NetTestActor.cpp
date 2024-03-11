@@ -14,6 +14,7 @@ ANetTestActor::ANetTestActor()
 
 	// 통신을 가능하게 하자
 	bReplicates = true;
+	SetReplicates(true);
 }
 
 void ANetTestActor::BeginPlay()
@@ -42,10 +43,7 @@ void ANetTestActor::Tick(float DeltaTime)
 		SetActorRotation(rot);
 	}*/
 	
-	//크기를 증가시키자
-	//만약에 크기가 1.5 보다 커지면
-	//크기가 작아지게하자
-	//만약에 크기가 0.5보다 작아지면
+	TestScale();	
 }
 
 void ANetTestActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -53,6 +51,7 @@ void ANetTestActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ANetTestActor, rotYaw);
+	DOREPLIFETIME(ANetTestActor, scaleValue);
 }
 
 
@@ -61,6 +60,58 @@ void ANetTestActor::OnRep_RotYaw()
 	FRotator rot = GetActorRotation();
 	rot.Yaw = rotYaw;
 	SetActorRotation(rot);
+}
+
+void ANetTestActor::TestScale()
+{
+	// 만약에 서버라면
+	if (HasAuthority())
+	{
+		// 1. 만약에 bScaleIncrease true 라면
+		if (bScale == true)
+		{
+			// 1 - 1. FVector 자료형 현재 나의 크기를 변수 담자
+			FVector s = GetActorScale3D();
+			// 1 - 2. 받은 변수의를 50 * DeltaTime 만큼 증가시키자
+			s += FVector(1 * GetWorld()->DeltaTimeSeconds);
+			// 1 - 3. s 를 나의 스케일 값으로 하자.
+			SetActorScale3D(s);
+			// 1 - 4. 만약에 1.5보다 커지면 bScaleIncrease 를 false;
+			if (s.X > 1.5f)
+			{
+				bScale = false;
+			}
+			scaleValue = s;
+		}
+		// 2. 그렇지 않으면
+		else
+		{
+			// 1 - 1. FVector 자료형 현재 나의 크기를 변수 담자
+			FVector s = GetActorScale3D();
+			// 1 - 2. 받은 변수의를 50 * DeltaTime 만큼 감소시키자
+			s -= FVector(1 * GetWorld()->DeltaTimeSeconds);
+			// 1 - 3. s 를 나의 스케일 값으로 하자.
+			SetActorScale3D(s);
+			// 1 - 4. 만약에 0.5보다 작아지면 bScaleIncrease 를 true;
+			if (s.X < 0.5f)
+			{
+				bScale = true;
+			}
+			scaleValue = s;
+		}
+	}
+	else
+	{
+		SetActorScale3D(scaleValue)
+	}
+	
+	
+
+
+	//크기를 증가시키자
+	//만약에 크기가 1.5 보다 커지면
+	//크기가 작아지게하자
+	//만약에 크기가 0.5보다 작아지면
 }
 
 void ANetTestActor::PrintNetLog()
