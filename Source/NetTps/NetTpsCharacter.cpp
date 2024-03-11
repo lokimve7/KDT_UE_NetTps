@@ -11,9 +11,11 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 
+#include <Components/WidgetComponent.h>
 #include "Kismet/GameplayStatics.h"
 #include "NetPlayerAnimInstance.h"
 #include "MainWidget.h"
+#include "HealthBar.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -59,6 +61,10 @@ ANetTpsCharacter::ANetTpsCharacter()
 	compGun->SetupAttachment(GetMesh(), FName(TEXT("GunPosition")));
 	compGun->SetRelativeLocation(FVector(-7.144f, 3.68f, 4.136f));
 	compGun->SetRelativeRotation(FRotator(3.4f, 75.699f, 6.6424f));
+
+	// HP 위젯 (내 머리위에 있는)
+	compHP = CreateDefaultSubobject<UWidgetComponent>(TEXT("HP"));
+	compHP->SetupAttachment(RootComponent);
 
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
@@ -108,6 +114,16 @@ void ANetTpsCharacter::BeginPlay()
 	//	mainWidget->AddBullet();
 	//}
 	ReloadComplete();
+}
+
+void ANetTpsCharacter::DamageProcess()
+{
+	// 현재 HP 줄이자
+	currHP -= 10;
+	// compHP 에 셋팅되어 있는 HealthBar 를 가져오자
+	UHealthBar* healthbar = Cast<UHealthBar>(compHP->GetWidget());
+	// 가져온 HealtBar 의 함수 UpdateHealthBar 호출
+	healthbar->UpdateHealthBar(currHP, maxHP);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -182,6 +198,9 @@ void ANetTpsCharacter::Look(const FInputActionValue& Value)
 
 void ANetTpsCharacter::TakePistol()
 {
+	// 만약에 재장전 중이면 함수를 나가자
+	if(isReloading) return;
+
 	// 만약에 총을 들고 있다면
 	if (closestPistol)
 	{
@@ -283,6 +302,14 @@ void ANetTpsCharacter::Fire()
 	if (isHit)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), pistolEffect, hitInfo.ImpactPoint, FRotator::ZeroRotator, true);
+		
+		// 만약에 맞은 애가 다른 Player 라면
+		ANetTpsCharacter* otherPlayer = Cast<ANetTpsCharacter>(hitInfo.GetActor());
+		if (otherPlayer)
+		{
+			// 데미지 주자
+			otherPlayer->DamageProcess();
+		}
 	}
 
 	// 총 쏘는 애니메이션 실행
