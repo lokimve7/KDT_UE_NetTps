@@ -60,6 +60,10 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_ChangeLocation();
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_ChangeLocation(FVector pos);
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_ChangeLocation(FVector pos);
 
 public:
 	void PrintNetLog();
