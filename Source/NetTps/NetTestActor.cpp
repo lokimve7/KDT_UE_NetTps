@@ -13,14 +13,15 @@ ANetTestActor::ANetTestActor()
 	SetRootComponent(compMesh);
 
 	// 통신을 가능하게 하자
-	bReplicates = true;
+	//bReplicates = true;
 	SetReplicates(true);
 }
 
 void ANetTestActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	mat = compMesh->CreateDynamicMaterialInstance(0);
 }
 
 void ANetTestActor::Tick(float DeltaTime)
@@ -44,6 +45,8 @@ void ANetTestActor::Tick(float DeltaTime)
 	}*/
 	
 	TestScale();	
+
+	TestColor();
 }
 
 void ANetTestActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -52,6 +55,7 @@ void ANetTestActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 	DOREPLIFETIME(ANetTestActor, rotYaw);
 	DOREPLIFETIME(ANetTestActor, scaleValue);
+	DOREPLIFETIME(ANetTestActor, matColor);
 }
 
 
@@ -103,6 +107,25 @@ void ANetTestActor::TestScale()
 	else
 	{
 		SetActorScale3D(scaleValue);
+	}
+}
+
+void ANetTestActor::TestColor()
+{
+	// 서버라면 로직처리(2초마다 랜덤한 색 변경)
+	if (HasAuthority())
+	{
+		currTime += GetWorld()->GetDeltaSeconds();
+		if (currTime > 2)
+		{
+			currTime = 0;
+			matColor = FLinearColor::MakeRandomColor();
+			mat->SetVectorParameterValue(TEXT("FloorColor"), matColor);
+		}
+	}
+	else
+	{
+		mat->SetVectorParameterValue(TEXT("FloorColor"), matColor);
 	}
 }
 

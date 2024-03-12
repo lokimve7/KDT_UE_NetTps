@@ -35,16 +35,18 @@ public:
 	UFUNCTION()
 	void OnRep_RotYaw();
 
-	
 	bool bScale = true;
 	UPROPERTY(Replicated)
 	FVector scaleValue = FVector::ZeroVector;
 	void TestScale();
 
-
+	UPROPERTY()
+	class UMaterialInstanceDynamic* mat;
+	UPROPERTY(Replicated)
+	FLinearColor matColor;
+	float currTime = 0;
+	void TestColor();
 
 public:
 	void PrintNetLog();
-
-
 };
