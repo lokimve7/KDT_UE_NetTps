@@ -366,7 +366,11 @@ void ANetTpsCharacter::Fire()
 	// 총알이 0개면 함수를 나가자
 	// 재장전 중에는 함수를 나가자
 	if (closestPistol == nullptr || currBulletCnt <= 0 || isReloading) return;
+	ServerRPC_Fire();
+}
 
+void ANetTpsCharacter::ServerRPC_Fire_Implementation()
+{
 	FHitResult hitInfo;
 	FVector startPos = FollowCamera->GetComponentLocation();
 	FVector endPos = startPos + FollowCamera->GetForwardVector() * 100000;
@@ -375,17 +379,22 @@ void ANetTpsCharacter::Fire()
 
 	bool isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECollisionChannel::ECC_Visibility, params);
 
+	MultiRPC_Fire(isHit, hitInfo.ImpactPoint);
+}
+
+void ANetTpsCharacter::MultiRPC_Fire_Implementation(bool isHit, FVector impactPoint)
+{
 	if (isHit)
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), pistolEffect, hitInfo.ImpactPoint, FRotator::ZeroRotator, true);
-		
-		// 만약에 맞은 애가 다른 Player 라면
-		ANetTpsCharacter* otherPlayer = Cast<ANetTpsCharacter>(hitInfo.GetActor());
-		if (otherPlayer)
-		{
-			// 데미지 주자
-			otherPlayer->DamageProcess();
-		}
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), pistolEffect, impactPoint, FRotator::ZeroRotator, true);
+
+		//// 만약에 맞은 애가 다른 Player 라면
+		//ANetTpsCharacter* otherPlayer = Cast<ANetTpsCharacter>(hitInfo.GetActor());
+		//if (otherPlayer)
+		//{
+		//	// 데미지 주자
+		//	otherPlayer->DamageProcess();
+		//}
 	}
 
 	// 총 쏘는 애니메이션 실행
@@ -394,7 +403,10 @@ void ANetTpsCharacter::Fire()
 	// 총알 하나 사용!
 	currBulletCnt--;
 	// 총알 UI 하나 제거
-	mainWidget->RemoveBullet();
+	if (mainWidget)
+	{
+		mainWidget->RemoveBullet();
+	}
 }
 
 void ANetTpsCharacter::Reload()

@@ -79,6 +79,12 @@ protected:
 
 public:
 	void Fire();
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Fire();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Fire(bool isHit, FVector impactPoint);
+
+
 	void Reload();
 	void ReloadComplete();
 
@@ -136,4 +142,5 @@ public:
 	float currHP = maxHP;
 	void DamageProcess();
 };
+
 
