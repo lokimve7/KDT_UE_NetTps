@@ -66,8 +66,16 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void TakePistol();
-	void AttachPistol();
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_TakePistol();
+
+	void AttachPistol(AActor* pistol);
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_AttachPistol(AActor* pistol);
+
 	void DetachPistol();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_DetachPistol();
 
 public:
 	void Fire();

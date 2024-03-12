@@ -99,12 +99,14 @@ void ANetTpsCharacter::BeginPlay()
 		}
 	}
 	// 만약에 나의 Local Player 라면
-	//if (IsLocallyControlled())
+	if (IsLocallyControlled())
 	{
 		// Main Widget 생성
 		mainWidget = Cast<UMainWidget>(CreateWidget(GetWorld(), mainWidgetFactory));
 		mainWidget->AddToViewport();
 		mainWidget->ShowPistolUI(false);
+
+		ReloadComplete();
 	}
 
 
@@ -116,7 +118,7 @@ void ANetTpsCharacter::BeginPlay()
 	//{
 	//	mainWidget->AddBullet();
 	//}
-	ReloadComplete();
+	
 }
 
 void ANetTpsCharacter::Tick(float DeltaSeconds)
@@ -243,14 +245,19 @@ void ANetTpsCharacter::Look(const FInputActionValue& Value)
 
 void ANetTpsCharacter::TakePistol()
 {
+	ServerRPC_TakePistol();
+}
+
+void ANetTpsCharacter::ServerRPC_TakePistol_Implementation()
+{
 	// 만약에 재장전 중이면 함수를 나가자
-	if(isReloading) return;
+	if (isReloading) return;
 
 	// 만약에 총을 들고 있다면
 	if (closestPistol)
 	{
-		DetachPistol();
-		closestPistol = nullptr;
+		closestPistol->SetOwner(nullptr);
+		MultiRPC_DetachPistol();
 		return;
 	}
 
@@ -261,11 +268,14 @@ void ANetTpsCharacter::TakePistol()
 
 	for (int32 i = 0; i < allPistol.Num(); i++)
 	{
-		// 1. 모든 Pistold 에서 나와의 거리를 구하자.
+		// 만약에 총이 소유자가 있으면 continue;
+		if(allPistol[i]->GetOwner() != nullptr) continue;
+
+		// 1. 모든 Pistol 에서 나와의 거리를 구하자.
 		float dist = FVector::Distance(GetActorLocation(), allPistol[i]->GetActorLocation());
 
 		// 내가 집을 수 있는 범위에 있니?
-		if (dist > takeGunDist) continue;		
+		if (dist > takeGunDist) continue;
 
 		// closestDist 보다 dist 작니?
 		if (closestDist > dist)
@@ -274,16 +284,20 @@ void ANetTpsCharacter::TakePistol()
 			closestDist = dist;
 			// closestPistol 를 allPistol[i] 로 갱신
 			closestPistol = allPistol[i];
+			// 총의 owner 설정
+			closestPistol->SetOwner(this);
 		}
 	}
 
-	AttachPistol();	
+	MultiRPC_AttachPistol(closestPistol);
+	//AttachPistol();
 }
 
-void ANetTpsCharacter::AttachPistol()
+void ANetTpsCharacter::AttachPistol(AActor* pistol)
 {
 	// 가까운 총이 없으면 함수를 나가자
-	if (closestPistol == nullptr) return;
+	if (pistol == nullptr) return;
+	closestPistol = pistol;
 
 	// 물리적인 현상 Off 시켜주자
 	auto compMesh = closestPistol->GetComponentByClass<UStaticMeshComponent>();
@@ -303,8 +317,16 @@ void ANetTpsCharacter::AttachPistol()
 	CameraBoom->TargetArmLength = 100;
 	CameraBoom->SetRelativeLocation(FVector(-4.33f, 33.8f, 70));
 
-	//Pistol UI 보이게 하자
-	mainWidget->ShowPistolUI(true);
+	if (mainWidget)
+	{
+		//Pistol UI 보이게 하자
+		mainWidget->ShowPistolUI(true);
+	}
+}
+
+void ANetTpsCharacter::MultiRPC_AttachPistol_Implementation(AActor* pistol)
+{
+	AttachPistol(pistol);
 }
 
 void ANetTpsCharacter::DetachPistol()
@@ -325,8 +347,17 @@ void ANetTpsCharacter::DetachPistol()
 	CameraBoom->TargetArmLength = 400;
 	CameraBoom->SetRelativeLocation(FVector::ZeroVector);
 
-	//Pistol UI 보이지 않게 하자
-	mainWidget->ShowPistolUI(false);
+	if (mainWidget)
+	{
+		//Pistol UI 보이지 않게 하자
+		mainWidget->ShowPistolUI(false);
+	}
+}
+
+void ANetTpsCharacter::MultiRPC_DetachPistol_Implementation()
+{
+	DetachPistol();
+	closestPistol = nullptr;
 }
 
 void ANetTpsCharacter::Fire()

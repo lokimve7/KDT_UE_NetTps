@@ -178,12 +178,12 @@ void ANetTestActor::ServerRPC_ChangeLocation_Implementation()
 	// 랜덤한 위치를 뽑자
 	FVector randPos = FVector(FMath::RandRange(10, 20), FMath::RandRange(10, 20), FMath::RandRange(10, 20));
 	FVector pos = GetActorLocation() + randPos;
-	//SetActorLocation(pos);
+	SetActorLocation(pos);
 
 	// owner 인 client 에 함수 호출
 	//ClientRPC_ChangeLocation(pos);
 	
-	MultiRPC_ChangeLocation(pos);
+	//MultiRPC_ChangeLocation(pos);
 }
 
 void ANetTestActor::ClientRPC_ChangeLocation_Implementation(FVector pos)
