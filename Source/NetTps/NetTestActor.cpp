@@ -3,6 +3,8 @@
 
 #include "NetTestActor.h"
 #include <Net/UnrealNetwork.h>
+#include "NetTpsCharacter.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 ANetTestActor::ANetTestActor()
@@ -47,6 +49,10 @@ void ANetTestActor::Tick(float DeltaTime)
 	TestScale();	
 
 	TestColor();
+
+	FindOwner();
+
+	TestLocation();
 }
 
 void ANetTestActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -58,6 +64,30 @@ void ANetTestActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(ANetTestActor, matColor);
 }
 
+
+void ANetTestActor::FindOwner()
+{
+	if(HasAuthority() == false) return;
+
+	AActor* ownerActor = nullptr;
+	float closest = 100000;
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANetTpsCharacter::StaticClass(), allPlayer);
+	for (int32 i = 0; i < allPlayer.Num(); i++)
+	{
+		float dist = FVector::Distance(GetActorLocation(), allPlayer[i]->GetActorLocation());
+		if (searchDistance > dist && closest > dist)
+		{
+			closest = dist;
+			ownerActor = allPlayer[i];
+		}
+	}
+
+	if (GetOwner() != ownerActor)
+	{
+		SetOwner(ownerActor);
+	}
+}
 
 void ANetTestActor::OnRep_RotYaw()
 {
@@ -127,6 +157,28 @@ void ANetTestActor::TestColor()
 	{
 		mat->SetVectorParameterValue(TEXT("FloorColor"), matColor);
 	}
+}
+
+void ANetTestActor::TestLocation()
+{
+	if (!HasAuthority())
+	{
+		currTime2 += GetWorld()->DeltaTimeSeconds;
+		if (currTime2 > 2)
+		{
+			currTime2 = 0;
+			ServerRPC_ChangeLocation();
+		}
+	}	
+}
+
+
+void ANetTestActor::ServerRPC_ChangeLocation_Implementation()
+{
+	// ·£´ýÇÑ À§Ä¡¸¦ »ÌÀÚ
+	FVector randPos = FVector(FMath::RandRange(10, 20), FMath::RandRange(10, 20), FMath::RandRange(10, 20));
+	FVector pos = GetActorLocation() + randPos;
+	SetActorLocation(pos);
 }
 
 void ANetTestActor::PrintNetLog()

@@ -29,6 +29,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* compMesh;
 
+	// Owner 설정
+	UPROPERTY()
+	TArray<class AActor*> allPlayer;
+	float searchDistance = 200;
+	void FindOwner();
+
+	// 변수 Replicate
 	//UPROPERTY(Replicated)
 	UPROPERTY(ReplicatedUsing=OnRep_RotYaw)
 	float rotYaw = 0;	
@@ -46,6 +53,13 @@ public:
 	FLinearColor matColor;
 	float currTime = 0;
 	void TestColor();
+
+	// RPC 동기화
+	float currTime2 = 0;
+	void TestLocation();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ChangeLocation();
 
 public:
 	void PrintNetLog();
