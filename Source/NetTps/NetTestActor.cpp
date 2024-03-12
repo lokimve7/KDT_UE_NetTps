@@ -102,16 +102,8 @@ void ANetTestActor::TestScale()
 	}
 	else
 	{
-		SetActorScale3D(scaleValue)
+		SetActorScale3D(scaleValue);
 	}
-	
-	
-
-
-	//크기를 증가시키자
-	//만약에 크기가 1.5 보다 커지면
-	//크기가 작아지게하자
-	//만약에 크기가 0.5보다 작아지면
 }
 
 void ANetTestActor::PrintNetLog()
