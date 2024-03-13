@@ -153,6 +153,15 @@ public:
 	void OnRep_CurrHP();
 
 	void DamageProcess();
+
+
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> cubeFactory;
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_MakeCube();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_MakeCube();
 };
 
 

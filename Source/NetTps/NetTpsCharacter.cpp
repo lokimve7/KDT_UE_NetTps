@@ -213,6 +213,17 @@ void ANetTpsCharacter::DamageProcess()
 	OnRep_CurrHP();
 }
 
+void ANetTpsCharacter::ServerRPC_MakeCube_Implementation()
+{
+	// 나한테 접한 애들이 큐브 만들어
+	MultiRPC_MakeCube();
+}
+
+void ANetTpsCharacter::MultiRPC_MakeCube_Implementation()
+{
+	GetWorld()->SpawnActor<AActor>(cubeFactory, compGun->GetComponentLocation(), compGun->GetComponentRotation());
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -402,7 +413,8 @@ void ANetTpsCharacter::MultiRPC_DetachPistol_Implementation()
 
 void ANetTpsCharacter::Fire()
 {
-	ServerRPC_Fire();
+	ServerRPC_MakeCube();
+	//ServerRPC_Fire();
 }
 
 void ANetTpsCharacter::ServerRPC_Fire_Implementation()
