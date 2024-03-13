@@ -6,7 +6,6 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
@@ -105,10 +104,9 @@ void ANetTpsCharacter::BeginPlay()
 		mainWidget = Cast<UMainWidget>(CreateWidget(GetWorld(), mainWidgetFactory));
 		mainWidget->AddToViewport();
 		mainWidget->ShowPistolUI(false);
-
-		ReloadComplete();
 	}
 
+	ReloadComplete();
 
 	//// 총알 초기 설정
 	//currBulletCnt = maxBulletCnt;
@@ -125,7 +123,7 @@ void ANetTpsCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	PrintNetLog();
+	//PrintNetLog();
 }
 
 void ANetTpsCharacter::PrintNetLog()
@@ -362,15 +360,16 @@ void ANetTpsCharacter::MultiRPC_DetachPistol_Implementation()
 
 void ANetTpsCharacter::Fire()
 {
-	// 총을 들고 있지 않으면 함수를 나가자
-	// 총알이 0개면 함수를 나가자
-	// 재장전 중에는 함수를 나가자
-	if (closestPistol == nullptr || currBulletCnt <= 0 || isReloading) return;
 	ServerRPC_Fire();
 }
 
 void ANetTpsCharacter::ServerRPC_Fire_Implementation()
 {
+	// 총을 들고 있지 않으면 함수를 나가자
+	// 총알이 0개면 함수를 나가자
+	// 재장전 중에는 함수를 나가자
+	if (closestPistol == nullptr || currBulletCnt <= 0 || isReloading) return;
+
 	FHitResult hitInfo;
 	FVector startPos = FollowCamera->GetComponentLocation();
 	FVector endPos = startPos + FollowCamera->GetForwardVector() * 100000;
@@ -411,10 +410,20 @@ void ANetTpsCharacter::MultiRPC_Fire_Implementation(bool isHit, FVector impactPo
 
 void ANetTpsCharacter::Reload()
 {
+	ServerRPC_Reload();
+}
+
+void ANetTpsCharacter::ServerRPC_Reload_Implementation()
+{
 	// 총을 들고 있지 않으면 함수를 나가자
 	// 재장전 중이면 함수를 나가자
-	if (closestPistol == nullptr || isReloading) return;	
+	if (closestPistol == nullptr || isReloading) return;
 
+	MultiRPC_Reload();
+}
+
+void ANetTpsCharacter::MultiRPC_Reload_Implementation()
+{
 	// 재장전 애니메이션 실행
 	PlayAnimMontage(pistolMontage, 1.0f, FName(TEXT("Reload")));
 
@@ -423,11 +432,15 @@ void ANetTpsCharacter::Reload()
 }
 
 void ANetTpsCharacter::ReloadComplete()
-{
+{	
 	// UI 에 추가해야 하는 총알 갯수
 	int32 addBulletCnt = maxBulletCnt - currBulletCnt;
-	for (int32 i = 0; i < addBulletCnt; i++)
-		mainWidget->AddBullet();
+
+	if (mainWidget)
+	{
+		for (int32 i = 0; i < addBulletCnt; i++)
+			mainWidget->AddBullet();
+	}
 
 	currBulletCnt = maxBulletCnt;
 

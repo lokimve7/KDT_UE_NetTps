@@ -84,8 +84,11 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Fire(bool isHit, FVector impactPoint);
 
-
 	void Reload();
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Reload();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Reload();
 	void ReloadComplete();
 
 protected:
