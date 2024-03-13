@@ -100,6 +100,8 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	void PrintNetLog();
 	
 public:
@@ -142,7 +144,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UWidgetComponent* compHP;
 	float maxHP = 100;
+
+	UPROPERTY(ReplicatedUsing = OnRep_CurrHP)
 	float currHP = maxHP;
+	UFUNCTION()
+	void OnRep_CurrHP();
+
 	void DamageProcess();
 };
 

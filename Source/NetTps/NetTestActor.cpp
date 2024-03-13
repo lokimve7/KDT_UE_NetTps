@@ -30,7 +30,7 @@ void ANetTestActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	PrintNetLog();
+	//PrintNetLog();
 
 	// 만약에 서버라면 회전 시켜라
 	if (HasAuthority())

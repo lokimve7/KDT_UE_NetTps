@@ -21,6 +21,9 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UHorizontalBox* bulletPanel;
 
+	UPROPERTY(meta = (BindWidget))
+	class UHealthBar* myHealthBar;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> bulletFactory;
 

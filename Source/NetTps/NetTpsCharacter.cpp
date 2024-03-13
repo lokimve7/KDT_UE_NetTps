@@ -11,6 +11,7 @@
 #include "InputActionValue.h"
 
 #include <Components/WidgetComponent.h>
+#include <Net/UnrealNetwork.h>
 #include "Kismet/GameplayStatics.h"
 #include "NetPlayerAnimInstance.h"
 #include "MainWidget.h"
@@ -126,6 +127,13 @@ void ANetTpsCharacter::Tick(float DeltaSeconds)
 	//PrintNetLog();
 }
 
+void ANetTpsCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ANetTpsCharacter, currHP);
+}
+
 void ANetTpsCharacter::PrintNetLog()
 {
 	// Connection 상태
@@ -153,15 +161,23 @@ void ANetTpsCharacter::PrintNetLog()
 		1.0);
 }
 
-void ANetTpsCharacter::DamageProcess()
+void ANetTpsCharacter::OnRep_CurrHP()
 {
-	// 현재 HP 줄이자
-	currHP -= 10;
-
-	// compHP 에 셋팅되어 있는 HealthBar 를 가져오자
-	UHealthBar* healthbar = Cast<UHealthBar>(compHP->GetWidget());
-	// 가져온 HealtBar 의 함수 UpdateHealthBar 호출
-	healthbar->UpdateHealthBar(currHP, maxHP);
+	// 나의 캐릭터라면
+	if (IsLocallyControlled())
+	{
+		// mainwidget 에 있는 healtBar 갱신
+		mainWidget->myHealthBar->UpdateHealthBar(currHP, maxHP);
+	}
+	else
+	{
+		// 머리위에 있는 healtBar 갱신
+		// compHP 에 셋팅되어 있는 HealthBar 를 가져오자
+		UHealthBar* healthbar = Cast<UHealthBar>(compHP->GetWidget());
+		// 가져온 HealtBar 의 함수 UpdateHealthBar 호출
+		healthbar->UpdateHealthBar(currHP, maxHP);
+	}
+	
 
 	// 만약에 현재 HP 가 0이면
 	if (currHP <= 0)
@@ -169,6 +185,14 @@ void ANetTpsCharacter::DamageProcess()
 		// 죽음처리
 		anim->isDeath = true;
 	}
+}
+
+void ANetTpsCharacter::DamageProcess()
+{
+	// 현재 HP 줄이자
+	currHP -= 10;
+	
+	OnRep_CurrHP();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -377,6 +401,18 @@ void ANetTpsCharacter::ServerRPC_Fire_Implementation()
 	params.AddIgnoredActor(this);
 
 	bool isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECollisionChannel::ECC_Visibility, params);
+	
+	if (isHit)
+	{
+		// 만약에 맞은 애가 다른 Player 라면
+		ANetTpsCharacter* otherPlayer = Cast<ANetTpsCharacter>(hitInfo.GetActor());
+		if (otherPlayer)
+		{
+			// 데미지 주자
+			otherPlayer->DamageProcess();
+		}
+	}
+
 
 	MultiRPC_Fire(isHit, hitInfo.ImpactPoint);
 }
@@ -387,13 +423,7 @@ void ANetTpsCharacter::MultiRPC_Fire_Implementation(bool isHit, FVector impactPo
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), pistolEffect, impactPoint, FRotator::ZeroRotator, true);
 
-		//// 만약에 맞은 애가 다른 Player 라면
-		//ANetTpsCharacter* otherPlayer = Cast<ANetTpsCharacter>(hitInfo.GetActor());
-		//if (otherPlayer)
-		//{
-		//	// 데미지 주자
-		//	otherPlayer->DamageProcess();
-		//}
+		
 	}
 
 	// 총 쏘는 애니메이션 실행
