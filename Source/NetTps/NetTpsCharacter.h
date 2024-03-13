@@ -143,6 +143,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UWidgetComponent* compHP;
+	void BillboardHP();
+
 	float maxHP = 100;
 
 	UPROPERTY(ReplicatedUsing = OnRep_CurrHP)

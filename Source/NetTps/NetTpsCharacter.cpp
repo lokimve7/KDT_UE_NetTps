@@ -16,6 +16,7 @@
 #include "NetPlayerAnimInstance.h"
 #include "MainWidget.h"
 #include "HealthBar.h"
+#include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -105,6 +106,8 @@ void ANetTpsCharacter::BeginPlay()
 		mainWidget = Cast<UMainWidget>(CreateWidget(GetWorld(), mainWidgetFactory));
 		mainWidget->AddToViewport();
 		mainWidget->ShowPistolUI(false);
+
+		compHP->SetVisibility(false);
 	}
 
 	ReloadComplete();
@@ -125,6 +128,8 @@ void ANetTpsCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	//PrintNetLog();
+
+	BillboardHP();
 }
 
 void ANetTpsCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -159,6 +164,19 @@ void ANetTpsCharacter::PrintNetLog()
 		0, 
 		true, 
 		1.0);
+}
+
+void ANetTpsCharacter::BillboardHP()
+{
+	AActor* cam = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+	// -카메라의 앞방향
+	FVector foward = -cam->GetActorForwardVector();
+	// 카메라의 윗방향
+	FVector up = cam->GetActorUpVector();
+ 
+	FRotator rot = UKismetMathLibrary::MakeRotFromXZ(foward, up);
+
+	compHP->SetWorldRotation(rot);
 }
 
 void ANetTpsCharacter::OnRep_CurrHP()
