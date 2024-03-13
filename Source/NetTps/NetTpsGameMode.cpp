@@ -4,6 +4,7 @@
 #include "NetTpsCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
+
 ANetTpsGameMode::ANetTpsGameMode()
 {
 	// set default pawn class to our Blueprinted character
@@ -13,3 +14,4 @@ ANetTpsGameMode::ANetTpsGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }
+

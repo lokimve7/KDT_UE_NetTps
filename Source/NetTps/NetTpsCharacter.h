@@ -160,15 +160,15 @@ public:
 
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> cubeFactory;
+	TSubclassOf<class ASimpleCube> cubeFactory;
+
 	UFUNCTION()
 	void MakeCube();
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_MakeCube();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_MakeCube();
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_DestoryCube(AActor* destroyActor);
+
 };
 
 

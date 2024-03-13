@@ -17,6 +17,8 @@
 #include "MainWidget.h"
 #include "HealthBar.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
+#include "SimpleCube.h"
+#include "NetTpsGameMode.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -224,21 +226,12 @@ void ANetTpsCharacter::ServerRPC_MakeCube_Implementation()
 {
 	// 나한테 접한 애들이 큐브 만들어
 	MultiRPC_MakeCube();
+	
 }
 
 void ANetTpsCharacter::MultiRPC_MakeCube_Implementation()
 {
-	GetWorld()->SpawnActor<AActor>(cubeFactory, compGun->GetComponentLocation(), compGun->GetComponentRotation());
-}
-
-void ANetTpsCharacter::MultiRPC_DestoryCube_Implementation(AActor* destroyActor)
-{
-	if (destroyActor == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("actor is null"));
-	}
-	else
-	destroyActor->Destroy();
+	ASimpleCube* cube = GetWorld()->SpawnActor<ASimpleCube>(cubeFactory, compGun->GetComponentLocation(), compGun->GetComponentRotation());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -463,7 +456,6 @@ void ANetTpsCharacter::ServerRPC_Fire_Implementation()
 		// cube 라면
 		else if (hitInfo.GetActor()->GetName().Contains(TEXT("BP_Cube")))
 		{
-			
 		}
 	}
 
