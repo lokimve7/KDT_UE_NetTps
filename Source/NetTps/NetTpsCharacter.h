@@ -53,6 +53,9 @@ class ANetTpsCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ReloadAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MakeCubeAction;
+
 public:
 	ANetTpsCharacter();
 	
@@ -158,10 +161,14 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> cubeFactory;
+	UFUNCTION()
+	void MakeCube();
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_MakeCube();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_MakeCube();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_DestoryCube(AActor* destroyActor);
 };
 
 

@@ -137,6 +137,7 @@ void ANetTpsCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ANetTpsCharacter, currHP);
+
 }
 
 void ANetTpsCharacter::PrintNetLog()
@@ -213,6 +214,12 @@ void ANetTpsCharacter::DamageProcess()
 	OnRep_CurrHP();
 }
 
+void ANetTpsCharacter::MakeCube()
+{
+	ServerRPC_MakeCube();
+}
+
+
 void ANetTpsCharacter::ServerRPC_MakeCube_Implementation()
 {
 	// 나한테 접한 애들이 큐브 만들어
@@ -222,6 +229,16 @@ void ANetTpsCharacter::ServerRPC_MakeCube_Implementation()
 void ANetTpsCharacter::MultiRPC_MakeCube_Implementation()
 {
 	GetWorld()->SpawnActor<AActor>(cubeFactory, compGun->GetComponentLocation(), compGun->GetComponentRotation());
+}
+
+void ANetTpsCharacter::MultiRPC_DestoryCube_Implementation(AActor* destroyActor)
+{
+	if (destroyActor == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("actor is null"));
+	}
+	else
+	destroyActor->Destroy();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -250,6 +267,9 @@ void ANetTpsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		// 재장전
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &ANetTpsCharacter::Reload);
+
+		EnhancedInputComponent->BindAction(MakeCubeAction, ETriggerEvent::Started, this, &ANetTpsCharacter::MakeCube);
+
 
 	}
 	else
@@ -413,8 +433,7 @@ void ANetTpsCharacter::MultiRPC_DetachPistol_Implementation()
 
 void ANetTpsCharacter::Fire()
 {
-	ServerRPC_MakeCube();
-	//ServerRPC_Fire();
+	ServerRPC_Fire();
 }
 
 void ANetTpsCharacter::ServerRPC_Fire_Implementation()
@@ -440,6 +459,11 @@ void ANetTpsCharacter::ServerRPC_Fire_Implementation()
 		{
 			// 데미지 주자
 			otherPlayer->DamageProcess();
+		}
+		// cube 라면
+		else if (hitInfo.GetActor()->GetName().Contains(TEXT("BP_Cube")))
+		{
+			
 		}
 	}
 
