@@ -159,16 +159,15 @@ public:
 
 
 
+	// RPC 연습 예제
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ASimpleCube> cubeFactory;
-
 	UFUNCTION()
 	void MakeCube();
 	UFUNCTION(Server, Reliable)
-	void ServerRPC_MakeCube();
+	void ServerRPC_MakeCube(FVector pos, FRotator rot);
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_MakeCube();
-
 };
 
 

@@ -13,6 +13,9 @@ UCLASS()
 class NETTPS_API UMainWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 public:
 	UPROPERTY(meta = (BindWidget))
@@ -24,6 +27,11 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UHealthBar* myHealthBar;
 
+	UPROPERTY(meta = (BindWidget))
+	class UImage* damageUI;
+	float currOpacity = 0;
+	bool isShowDamageUI = false;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> bulletFactory;
 
@@ -31,4 +39,5 @@ public:
 	void ShowPistolUI(bool isShow);
 	void AddBullet();
 	void RemoveBullet();
+	void ShowDamageUI();
 };

@@ -15,8 +15,9 @@ ANetTestActor::ANetTestActor()
 	SetRootComponent(compMesh);
 
 	// 통신을 가능하게 하자
-	//bReplicates = true;
-	SetReplicates(true);
+	bReplicates = true;
+	// Runtime (실행중에)
+	// SetReplicates(true);
 }
 
 void ANetTestActor::BeginPlay()

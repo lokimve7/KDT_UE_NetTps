@@ -189,6 +189,8 @@ void ANetTpsCharacter::OnRep_CurrHP()
 	{
 		// mainwidget 에 있는 healtBar 갱신
 		mainWidget->myHealthBar->UpdateHealthBar(currHP, maxHP);
+		// 데미지 UI 보이게 하자
+		mainWidget->ShowDamageUI();
 	}
 	else
 	{
@@ -218,15 +220,15 @@ void ANetTpsCharacter::DamageProcess()
 
 void ANetTpsCharacter::MakeCube()
 {
-	ServerRPC_MakeCube();
+	ServerRPC_MakeCube(compGun->GetComponentLocation(), compGun->GetComponentRotation());
 }
 
 
-void ANetTpsCharacter::ServerRPC_MakeCube_Implementation()
+void ANetTpsCharacter::ServerRPC_MakeCube_Implementation(FVector pos, FRotator rot)
 {
 	// 나한테 접한 애들이 큐브 만들어
-	MultiRPC_MakeCube();
-	
+	//MultiRPC_MakeCube();
+	GetWorld()->SpawnActor<ASimpleCube>(cubeFactory, pos, rot);
 }
 
 void ANetTpsCharacter::MultiRPC_MakeCube_Implementation()
