@@ -182,6 +182,16 @@ void ANetTpsCharacter::BillboardHP()
 	compHP->SetWorldRotation(rot);
 }
 
+void ANetTpsCharacter::DieProcess()
+{
+	// 내것이 아니라면 함수 나가자
+	if(!IsLocallyControlled()) return;
+
+	// 화면 회색 처리
+	FollowCamera->PostProcessSettings.bOverride_ColorSaturation = true;
+	FollowCamera->PostProcessSettings.ColorSaturation = FVector4(0, 0, 0, 1);
+}
+
 void ANetTpsCharacter::OnRep_CurrHP()
 {
 	// 나의 캐릭터라면
@@ -207,6 +217,16 @@ void ANetTpsCharacter::OnRep_CurrHP()
 	{
 		// 죽음처리
 		anim->isDeath = true;
+		// 충돌 안되게
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		// Movement 컴포넌트 비활성
+		GetCharacterMovement()->DisableMovement();
+		// 만약에 총들고 있다면 떨구자
+		if (IsLocallyControlled() && closestPistol)
+		{
+			TakePistol();
+		}
 	}
 }
 

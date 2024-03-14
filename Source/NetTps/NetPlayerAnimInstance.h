@@ -22,6 +22,9 @@ public:
 	UFUNCTION()
 	void AnimNotify_ReloadComplete();
 
+	UFUNCTION()
+	void AnimNotify_DieEnd();
+
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	bool hasPistol;

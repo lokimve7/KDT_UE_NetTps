@@ -146,16 +146,15 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UWidgetComponent* compHP;
-	void BillboardHP();
-
-	float maxHP = 100;
-
+	float maxHP = 20;
 	UPROPERTY(ReplicatedUsing = OnRep_CurrHP)
 	float currHP = maxHP;
 	UFUNCTION()
 	void OnRep_CurrHP();
-
 	void DamageProcess();
+	void BillboardHP();
+
+	void DieProcess();
 
 
 
