@@ -101,19 +101,14 @@ void ANetTpsCharacter::BeginPlay()
 			allPistol.Add(allActor[i]);
 		}
 	}
-	// 만약에 나의 Local Player 라면
-	if (IsLocallyControlled())
-	{
-		// Main Widget 생성
-		mainWidget = Cast<UMainWidget>(CreateWidget(GetWorld(), mainWidgetFactory));
-		mainWidget->AddToViewport();
-		mainWidget->ShowPistolUI(false);
-		mainWidget->ShowGameOverUI(false);
 
-		compHP->SetVisibility(false);
-	}
+	FString serverClient = HasAuthority() ? TEXT("[Server]") : TEXT("[Client]");
+	FString hasController = Controller ? TEXT("Player") : TEXT("No Player");
+	UE_LOG(LogTemp, Warning, TEXT("%s - %s"), *serverClient, *hasController);
 
+	
 	ReloadComplete();
+	
 
 	//// 총알 초기 설정
 	//currBulletCnt = maxBulletCnt;
@@ -133,6 +128,15 @@ void ANetTpsCharacter::Tick(float DeltaSeconds)
 	//PrintNetLog();
 
 	BillboardHP();
+}
+
+void ANetTpsCharacter::PossessedBy(AController* NewController)
+{
+	UE_LOG(LogTemp, Warning, TEXT("PossessedBy Start"));
+	Super::PossessedBy(NewController);
+	UE_LOG(LogTemp, Warning, TEXT("PossessedBy End"));
+
+	ClientRPC_CreateWidget();
 }
 
 void ANetTpsCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -194,6 +198,21 @@ void ANetTpsCharacter::DieProcess()
 
 	// GameOver UI 나오게
 	mainWidget->ShowGameOverUI(true);
+}
+
+void ANetTpsCharacter::ClientRPC_CreateWidget_Implementation()
+{
+	// 이전에 있던 mainWidget 지우자.
+
+	// Main Widget 생성
+	mainWidget = Cast<UMainWidget>(CreateWidget(GetWorld(), mainWidgetFactory));
+	mainWidget->AddToViewport();
+	mainWidget->ShowPistolUI(false);
+	mainWidget->ShowGameOverUI(false);
+
+	compHP->SetVisibility(false);
+		
+	ReloadComplete();
 }
 
 void ANetTpsCharacter::OnRep_CurrHP()
@@ -548,11 +567,14 @@ void ANetTpsCharacter::MultiRPC_Reload_Implementation()
 void ANetTpsCharacter::ReloadComplete()
 {	
 	// UI 에 추가해야 하는 총알 갯수
-	int32 addBulletCnt = maxBulletCnt - currBulletCnt;
+	//int32 addBulletCnt = maxBulletCnt - currBulletCnt;
 
 	if (mainWidget)
-	{
-		for (int32 i = 0; i < addBulletCnt; i++)
+	{	
+		for(int32 i = 0; i < currBulletCnt; i++)
+			mainWidget->RemoveBullet();
+		
+		for (int32 i = 0; i < maxBulletCnt; i++)
 			mainWidget->AddBullet();
 	}
 

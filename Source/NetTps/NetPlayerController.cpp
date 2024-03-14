@@ -6,6 +6,11 @@
 
 void ANetPlayerController::RespawnPlayer()
 {
+	ServerRPC_RespawnPlayer();
+}
+
+void ANetPlayerController::ServerRPC_RespawnPlayer_Implementation()
+{
 	// 해당 Controller 가 컨트롤 하고 있는 Pawn
 	APawn* player = GetPawn();
 

@@ -103,6 +103,8 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void PossessedBy(AController* NewController) override;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void PrintNetLog();
@@ -139,6 +141,8 @@ public:
 	TSubclassOf<class UMainWidget> mainWidgetFactory;
 	UPROPERTY()
 	class UMainWidget* mainWidget;
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_CreateWidget();
 
 	int32 maxBulletCnt = 10;
 	int32 currBulletCnt = 0;

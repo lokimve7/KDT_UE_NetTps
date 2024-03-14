@@ -53,6 +53,7 @@ void UMainWidget::ShowPistolUI(bool isShow)
 
 void UMainWidget::AddBullet()
 {
+	
 	// 총알 위젯 생성
 	UUserWidget* bullet = CreateWidget(GetWorld(), bulletFactory);
 	// 생성된 총알 위젯을 bulletPanel 추가하자
@@ -99,8 +100,11 @@ void UMainWidget::ShowGameOverUI(bool isShow)
 
 void UMainWidget::OnRetry()
 {
-	ShowGameOverUI(false);
+	//ShowGameOverUI(false);
 
 	ANetPlayerController* pc = Cast<ANetPlayerController>(GetWorld()->GetFirstPlayerController());
 	pc->RespawnPlayer();
+
+	// 나를 지우자
+	RemoveFromParent();
 }

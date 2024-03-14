@@ -16,4 +16,6 @@ class NETTPS_API ANetPlayerController : public APlayerController
 	
 public:
 	void RespawnPlayer();
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_RespawnPlayer();
 };
