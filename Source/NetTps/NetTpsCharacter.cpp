@@ -96,7 +96,7 @@ void ANetTpsCharacter::BeginPlay()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), allActor);
 	for (int32 i = 0; i < allActor.Num(); i++)
 	{
-		if (allActor[i]->GetActorLabel().Contains(TEXT("Pistol")))
+		if (allActor[i]->GetActorNameOrLabel().Contains(TEXT("Pistol")))
 		{
 			allPistol.Add(allActor[i]);
 		}
@@ -108,6 +108,7 @@ void ANetTpsCharacter::BeginPlay()
 		mainWidget = Cast<UMainWidget>(CreateWidget(GetWorld(), mainWidgetFactory));
 		mainWidget->AddToViewport();
 		mainWidget->ShowPistolUI(false);
+		mainWidget->ShowGameOverUI(false);
 
 		compHP->SetVisibility(false);
 	}
@@ -190,6 +191,9 @@ void ANetTpsCharacter::DieProcess()
 	// 화면 회색 처리
 	FollowCamera->PostProcessSettings.bOverride_ColorSaturation = true;
 	FollowCamera->PostProcessSettings.ColorSaturation = FVector4(0, 0, 0, 1);
+
+	// GameOver UI 나오게
+	mainWidget->ShowGameOverUI(true);
 }
 
 void ANetTpsCharacter::OnRep_CurrHP()
@@ -240,7 +244,19 @@ void ANetTpsCharacter::DamageProcess()
 
 void ANetTpsCharacter::MakeCube()
 {
-	ServerRPC_MakeCube(compGun->GetComponentLocation(), compGun->GetComponentRotation());
+	// 죽음처리
+	anim->isDeath = true;
+	// 충돌 안되게
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// Movement 컴포넌트 비활성
+	GetCharacterMovement()->DisableMovement();
+	// 만약에 총들고 있다면 떨구자
+	if (IsLocallyControlled() && closestPistol)
+	{
+		TakePistol();
+	}
+	//ServerRPC_MakeCube(compGun->GetComponentLocation(), compGun->GetComponentRotation());
 }
 
 

@@ -15,6 +15,7 @@ class NETTPS_API UMainWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 public:
@@ -35,6 +36,11 @@ public:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* damageAnim;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btn_Retry;
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btn_Exit;
+
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> bulletFactory;
@@ -44,4 +50,8 @@ public:
 	void AddBullet();
 	void RemoveBullet();
 	void ShowDamageUI();
+	void ShowGameOverUI(bool isShow);
+
+	UFUNCTION()
+	void OnRetry();
 };

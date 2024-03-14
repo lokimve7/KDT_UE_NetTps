@@ -5,6 +5,17 @@
 
 #include <Components/Image.h>
 #include <Components/HorizontalBox.h>
+#include <Components/Button.h>
+#include <Blueprint/WidgetBlueprintLibrary.h>
+#include "NetPlayerController.h"
+
+void UMainWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	// 다시하기 버튼 누르면 실행되는 함수 등록
+	btn_Retry->OnClicked.AddDynamic(this, &UMainWidget::OnRetry);
+}
 
 void UMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -62,4 +73,34 @@ void UMainWidget::ShowDamageUI()
 	//currOpacity = 1;
 
 	PlayAnimation(damageAnim);
+}
+
+void UMainWidget::ShowGameOverUI(bool isShow)
+{
+	// PlayerController 가져오자
+	APlayerController* pc = GetWorld()->GetFirstPlayerController();
+	pc->SetShowMouseCursor(isShow);
+
+	if (isShow)
+	{
+		btn_Retry->SetVisibility(ESlateVisibility::Visible);
+		btn_Exit->SetVisibility(ESlateVisibility::Visible);		
+
+		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(pc);
+	}
+	else
+	{
+		btn_Retry->SetVisibility(ESlateVisibility::Hidden);
+		btn_Exit->SetVisibility(ESlateVisibility::Hidden);
+
+		UWidgetBlueprintLibrary::SetInputMode_GameOnly(pc);
+	}
+}
+
+void UMainWidget::OnRetry()
+{
+	ShowGameOverUI(false);
+
+	ANetPlayerController* pc = Cast<ANetPlayerController>(GetWorld()->GetFirstPlayerController());
+	pc->RespawnPlayer();
 }
