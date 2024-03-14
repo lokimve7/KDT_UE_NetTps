@@ -58,6 +58,8 @@ void UMainWidget::RemoveBullet()
 
 void UMainWidget::ShowDamageUI()
 {
-	isShowDamageUI = true;
-	currOpacity = 1;
+	//isShowDamageUI = true;
+	//currOpacity = 1;
+
+	PlayAnimation(damageAnim);
 }

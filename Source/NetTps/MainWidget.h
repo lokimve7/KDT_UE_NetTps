@@ -32,6 +32,10 @@ public:
 	float currOpacity = 0;
 	bool isShowDamageUI = false;
 
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* damageAnim;
+
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> bulletFactory;
 
