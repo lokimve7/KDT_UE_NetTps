@@ -24,7 +24,24 @@ public:
 	void CreateMySession();
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 
+	// 세션 파괴하는 함수
+	UFUNCTION(BlueprintCallable)
+	void DestroyMySession();
+	void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
+
+	// 세션을 검색 함수
+	UFUNCTION(BlueprintCallable)
+	void FindOtherSession();
+	void OnFindSessionComplete(bool bWasSuccessful);
+
 public:
 	// 이 변수통해 (세션 만들고, 세션 검색, 세션 참여)
 	TSharedPtr<class IOnlineSession, ESPMode::ThreadSafe> sessionInterface;
+
+	// 세션 검색에 쓰이는 클래스
+	TSharedPtr<class FOnlineSessionSearch> sessionSearch;
+
+	// 세션 이름
+	FString mySessionName = TEXT("lokimve7");
+
 };

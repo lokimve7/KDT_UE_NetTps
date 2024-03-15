@@ -5,6 +5,7 @@
 #include <OnlineSubsystem.h>
 #include <OnlineSessionSettings.h>
 #include <Interfaces/OnlineSessionInterface.h>
+#include <Online/OnlineSessionNames.h>
 
 // OnlineSessionInterface 통해서 한다.
 // 세션을 만든다. 
@@ -22,6 +23,8 @@ void UNetGameInstance::Init()
 		// 세션 인터페이스 가져오자
 		sessionInterface = subsys->GetSessionInterface();
 		sessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnCreateSessionComplete);
+		sessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnDestroySessionComplete);
+		sessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UNetGameInstance::OnFindSessionComplete);
 	}
 }
 
@@ -34,7 +37,7 @@ void UNetGameInstance::CreateMySession()
 
 	// steam 사용하면 해당 옵션이 true 세션을 만들 수 있다.
 	sessionSettings.bUseLobbiesIfAvailable = true;
-
+	
 	// 인원 수 
 	sessionSettings.NumPublicConnections = 10;
 
@@ -44,7 +47,7 @@ void UNetGameInstance::CreateMySession()
 	// 세션 생성 요청
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
 
-	sessionInterface->CreateSession(*netID, FName(TEXT("lokimve7")), sessionSettings);
+	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
 }
 
 void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -56,5 +59,47 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete Fail"));
+	}
+}
+
+void UNetGameInstance::DestroyMySession()
+{
+	sessionInterface->DestroySession(FName(mySessionName));
+}
+
+void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete Success -- %s"), *SessionName.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete Fail"));
+	}
+}
+
+void UNetGameInstance::FindOtherSession()
+{
+	sessionSearch = MakeShared<FOnlineSessionSearch>();
+
+	sessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+
+	sessionSearch->MaxSearchResults = 10;
+
+	// 세션 검색 요청
+	sessionInterface->FindSessions(0, sessionSearch.ToSharedRef());
+}
+
+void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+	{
+		auto results = sessionSearch->SearchResults;
+		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete Success - count : %d"), results.Num());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete Fail"));
 	}
 }
