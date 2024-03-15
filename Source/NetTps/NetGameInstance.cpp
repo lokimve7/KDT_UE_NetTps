@@ -97,6 +97,20 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 	{
 		auto results = sessionSearch->SearchResults;
 		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete Success - count : %d"), results.Num());
+
+		for (int32 i = 0; i < results.Num(); i++)
+		{
+			FOnlineSessionSearchResult si = results[i];
+			FString roomName;
+			si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), roomName);
+			UE_LOG(LogTemp, Warning, TEXT("%d name : %s"), i, *roomName);
+		}
+
+		/*for (auto si : results)
+		{
+			FString roomName;
+			si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), roomName);
+		}*/
 	}
 	else
 	{

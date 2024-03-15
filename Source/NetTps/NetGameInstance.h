@@ -43,5 +43,4 @@ public:
 
 	// 세션 이름
 	FString mySessionName = TEXT("lokimve7");
-
 };
