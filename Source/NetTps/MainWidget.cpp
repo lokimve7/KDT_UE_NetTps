@@ -100,10 +100,11 @@ void UMainWidget::ShowGameOverUI(bool isShow)
 
 void UMainWidget::OnRetry()
 {
-	//ShowGameOverUI(false);
+	ShowGameOverUI(false);
 
 	ANetPlayerController* pc = Cast<ANetPlayerController>(GetWorld()->GetFirstPlayerController());
-	pc->RespawnPlayer();
+	//pc->RespawnPlayer();
+	pc->ChangeToSpectator();
 
 	// 나를 지우자
 	RemoveFromParent();

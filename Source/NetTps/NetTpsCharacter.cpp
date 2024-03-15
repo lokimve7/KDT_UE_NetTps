@@ -373,7 +373,6 @@ void ANetTpsCharacter::ServerRPC_TakePistol_Implementation()
 {
 	// 만약에 재장전 중이면 함수를 나가자
 	if (isReloading) return;
-
 	// 만약에 총을 들고 있다면
 	if (closestPistol)
 	{
