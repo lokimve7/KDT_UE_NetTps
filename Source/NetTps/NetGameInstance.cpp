@@ -83,8 +83,8 @@ void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSucc
 
 void UNetGameInstance::FindOtherSession()
 {
-	GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
-	return;
+	/*GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
+	return;*/
 	sessionSearch = MakeShared<FOnlineSessionSearch>();
 
 	sessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
