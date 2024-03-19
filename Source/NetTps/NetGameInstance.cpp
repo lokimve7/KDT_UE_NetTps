@@ -47,6 +47,8 @@ void UNetGameInstance::CreateMySession()
 	// 세션 생성 요청
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
 
+	int32 rand = FMath::RandRange(1, 100000);
+	mySessionName += FString::Printf(TEXT("%d"), rand);
 	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
 }
 
@@ -56,7 +58,7 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete Success -- %s"), *SessionName.ToString());
 		// Battle Map 으로 이동하자
-		//GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
+		GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
 	}
 	else
 	{
@@ -83,8 +85,6 @@ void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSucc
 
 void UNetGameInstance::FindOtherSession()
 {
-	/*GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
-	return;*/
 	sessionSearch = MakeShared<FOnlineSessionSearch>();
 
 	sessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
@@ -150,7 +150,6 @@ void UNetGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 			APlayerController* pc = GetWorld()->GetFirstPlayerController();
 			pc->ClientTravel(url, ETravelType::TRAVEL_Absolute);
 		}
-
 	}
 	else
 	{
