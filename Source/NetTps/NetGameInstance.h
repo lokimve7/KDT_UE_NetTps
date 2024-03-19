@@ -22,7 +22,7 @@ public:
 
 	// 세션 만드는 함수
 	UFUNCTION(BlueprintCallable)
-	void CreateMySession();
+	void CreateMySession(FString roomName, int32 maxPlayer);
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 
 	// 세션 파괴하는 함수

@@ -18,6 +18,11 @@ public:
 	virtual void NativeConstruct() override;
 
 public:
+	// game instance 담을 변수
+	UPROPERTY()
+	class UNetGameInstance* gi;
+
+
 	UPROPERTY(meta = (BindWidget))
 	class UWidgetSwitcher* widgetSwitcher;
 
@@ -42,6 +47,12 @@ public:
 	class UTextBlock* text_PlayerCount;
 	UPROPERTY(meta = (BindWidget))
 	class UButton* btn_CreateSession;
+
+	UFUNCTION()
+	void OnValueChanged(float Value);
+	UFUNCTION()
+	void OnClickCreateSession();
+
 	
 	// 세션 참여 화면
 

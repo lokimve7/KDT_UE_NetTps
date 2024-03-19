@@ -28,7 +28,7 @@ void UNetGameInstance::Init()
 	}
 }
 
-void UNetGameInstance::CreateMySession()
+void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 {
 	FOnlineSessionSettings sessionSettings;
 
@@ -39,10 +39,10 @@ void UNetGameInstance::CreateMySession()
 	sessionSettings.bUseLobbiesIfAvailable = true;
 	
 	// 牢盔 荐 
-	sessionSettings.NumPublicConnections = 10;
+	sessionSettings.NumPublicConnections = maxPlayer;
 
 	// 目胶乓 可记
-	sessionSettings.Set(FName(TEXT("ROOM_NAME")), FString(TEXT("KHJ_ROOM")), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	sessionSettings.Set(FName(TEXT("ROOM_NAME")), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 	// 技记 积己 夸没
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
