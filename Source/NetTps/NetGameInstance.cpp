@@ -56,7 +56,7 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete Success -- %s"), *SessionName.ToString());
 		// Battle Map 으로 이동하자
-		GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
+		//GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
 	}
 	else
 	{
@@ -83,6 +83,8 @@ void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSucc
 
 void UNetGameInstance::FindOtherSession()
 {
+	GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
+	return;
 	sessionSearch = MakeShared<FOnlineSessionSearch>();
 
 	sessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
