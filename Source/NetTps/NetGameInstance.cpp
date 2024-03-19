@@ -4,7 +4,6 @@
 #include "NetGameInstance.h"
 #include <OnlineSubsystem.h>
 #include <OnlineSessionSettings.h>
-#include <Interfaces/OnlineSessionInterface.h>
 #include <Online/OnlineSessionNames.h>
 
 // OnlineSessionInterface 통해서 한다.
@@ -25,6 +24,7 @@ void UNetGameInstance::Init()
 		sessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnCreateSessionComplete);
 		sessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnDestroySessionComplete);
 		sessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UNetGameInstance::OnFindSessionComplete);
+		sessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnJoinSessionComplete);
 	}
 }
 
@@ -55,6 +55,8 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 	if (bWasSuccessful)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete Success -- %s"), *SessionName.ToString());
+		// Battle Map 으로 이동하자
+		GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
 	}
 	else
 	{
@@ -106,6 +108,11 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			UE_LOG(LogTemp, Warning, TEXT("%d name : %s"), i, *roomName);
 		}
 
+		if (results.Num() > 0)
+		{
+			JoinOtherSession(0);
+		}
+
 		/*for (auto si : results)
 		{
 			FString roomName;
@@ -115,5 +122,36 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete Fail"));
+	}
+}
+
+void UNetGameInstance::JoinOtherSession(int32 idx)
+{
+	//TArray<FOnlineSessionSearchResult> 
+	auto results = sessionSearch->SearchResults;
+	sessionInterface->JoinSession(0, FName(mySessionName), results[0]);
+}
+
+void UNetGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type result)
+{
+	if (result == EOnJoinSessionCompleteResult::Success)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnJoinSessionComplete Success : %s"), *SessionName.ToString());
+		FString url;
+		// 참여해야 하는 Listen 서버 URL을 받아 오자
+		sessionInterface->GetResolvedConnectString(SessionName, url);
+		UE_LOG(LogTemp, Warning, TEXT("Join session URL : %s"), *url);
+		
+		if (!url.IsEmpty())
+		{
+			// 해당 URL 로 접속하자
+			APlayerController* pc = GetWorld()->GetFirstPlayerController();
+			pc->ClientTravel(url, ETravelType::TRAVEL_Absolute);
+		}
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnJoinSessionComplete Fail : %d"), result);
 	}
 }

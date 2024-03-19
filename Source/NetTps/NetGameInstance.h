@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include <Interfaces/OnlineSessionInterface.h>
 #include "NetGameInstance.generated.h"
 
 
@@ -33,6 +34,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void FindOtherSession();
 	void OnFindSessionComplete(bool bWasSuccessful);
+
+	// 세션 참여 함수
+	UFUNCTION(BlueprintCallable)
+	void JoinOtherSession(int32 idx);
+	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type result);
 
 public:
 	// 이 변수통해 (세션 만들고, 세션 검색, 세션 참여)
