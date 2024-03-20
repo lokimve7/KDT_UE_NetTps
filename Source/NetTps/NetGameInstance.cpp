@@ -54,7 +54,7 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	
 
 	// 커스텀 옵션
-	sessionSettings.Set(FName(TEXT("ROOM_NAME")), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	sessionSettings.Set(FName(TEXT("ROOM_NAME")), arrayData, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 	// 세션 생성 요청
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
