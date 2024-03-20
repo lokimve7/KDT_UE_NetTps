@@ -129,11 +129,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 
 			onSearchComplete.ExecuteIfBound(i, sessionInfo);
 		}
-
-		if (results.Num() > 0)
-		{
-			JoinOtherSession(0);
-		}
+			
 		
 		/*for (auto si : results)
 		{

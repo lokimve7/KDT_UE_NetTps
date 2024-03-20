@@ -20,6 +20,8 @@
 #include "HealthBar.h"
 #include "SimpleCube.h"
 #include "NetTpsGameMode.h"
+#include <../../../../../../../Source/Runtime/Engine/Classes/GameFramework/PlayerState.h>
+#include "PlayerNameWidget.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -70,6 +72,10 @@ ANetTpsCharacter::ANetTpsCharacter()
 	compHP = CreateDefaultSubobject<UWidgetComponent>(TEXT("HP"));
 	compHP->SetupAttachment(RootComponent);
 
+	// 닉네임 (내 머리위에 있는)
+	compName = CreateDefaultSubobject<UWidgetComponent>(TEXT("NICK_NAME"));
+	compName->SetupAttachment(compHP);
+
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
@@ -107,8 +113,9 @@ void ANetTpsCharacter::BeginPlay()
 	FString hasController = Controller ? TEXT("Player") : TEXT("No Player");
 	UE_LOG(LogTemp, Warning, TEXT("%s - %s"), *serverClient, *hasController);
 
-	
 	ReloadComplete();
+	
+
 	
 
 	//// 총알 초기 설정
@@ -129,6 +136,11 @@ void ANetTpsCharacter::Tick(float DeltaSeconds)
 	//PrintNetLog();
 
 	BillboardHP();
+
+	if (nickName.IsEmpty() == false)
+	{
+		Cast<UPlayerNameWidget>(compName->GetWidget())->SetNickName(nickName);
+	}
 }
 
 void ANetTpsCharacter::PossessedBy(AController* NewController)
@@ -138,6 +150,18 @@ void ANetTpsCharacter::PossessedBy(AController* NewController)
 	UE_LOG(LogTemp, Warning, TEXT("PossessedBy End"));
 
 	ClientRPC_CreateWidget();
+
+	APlayerState* ps = GetPlayerState();
+	if (ps)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player Name : %s"), *ps->GetPlayerName());
+		nickName = ps->GetPlayerName();
+		//OnRep_NickName();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("APlayerState : null"));
+	}
 }
 
 void ANetTpsCharacter::PostNetInit()
@@ -164,6 +188,8 @@ void ANetTpsCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 	DOREPLIFETIME(ANetTpsCharacter, currHP);
 	DOREPLIFETIME(ANetTpsCharacter, closestPistol);
+	DOREPLIFETIME(ANetTpsCharacter, nickName);
+
 }
 
 void ANetTpsCharacter::PrintNetLog()
@@ -279,6 +305,19 @@ void ANetTpsCharacter::DamageProcess()
 	
 	OnRep_CurrHP();
 }
+
+//void ANetTpsCharacter::OnRep_NickName()
+//{
+//	UPlayerNameWidget* widget = Cast<UPlayerNameWidget>(compName->GetWidget());
+//	if (widget == nullptr)
+//	{
+//		UE_LOG(LogTemp, Warning, TEXT("compName->GetWidget() is null"));
+//	}
+//	else
+//	{
+//		widget->SetNickName(nickName);
+//	}
+//}
 
 void ANetTpsCharacter::MakeCube()
 {

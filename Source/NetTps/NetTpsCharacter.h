@@ -160,8 +160,15 @@ public:
 	void OnRep_CurrHP();
 	void DamageProcess();
 	void BillboardHP();
-
 	void DieProcess();
+
+
+	UPROPERTY(EditAnywhere)
+	class UWidgetComponent* compName;
+	UPROPERTY(Replicated)
+	FString nickName;
+	/*UFUNCTION()
+	void OnRep_NickName();*/
 
 
 

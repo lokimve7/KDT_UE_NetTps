@@ -9,6 +9,8 @@
 #include <Components/TextBlock.h>
 #include <Components/EditableTextBox.h>
 #include <Components/ScrollBox.h>
+#include <Kismet/GameplayStatics.h>
+#include <GameFramework/PlayerState.h>
 
 #include "NetGameInstance.h"
 #include "SessionInfoWidget.h"
@@ -45,6 +47,9 @@ void ULobbyWidget::OnClickMoveCreateSession()
 {
 	// widget switcher 를 이용해서 1번째 Widget 이 활성화 되라!
 	widgetSwitcher->SetActiveWidgetIndex(1);
+	
+	APlayerState* ps = UGameplayStatics::GetPlayerState(GetWorld(), 0);
+	UE_LOG(LogTemp, Warning, TEXT("Player Name : %s"), *ps->GetPlayerName());
 }
 
 void ULobbyWidget::OnClickMoveSearchSession()
