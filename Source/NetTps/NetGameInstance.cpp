@@ -52,9 +52,13 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	TArray<uint8> arrayData = TArray<uint8>(bytes.data(), bytes.size());
 
 	// 目胶乓 可记
-	FString base64Data = FBase64::Encode(roomName);
+	FString base64Data = FBase64::Encode(arrayData);
+	UE_LOG(LogTemp, Warning, TEXT("%s "), *base64Data);
 
 	sessionSettings.Set(FName("ROOM_NAME"), base64Data, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+
+	
+
 
 	// 技记 积己 夸没
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
@@ -119,7 +123,25 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			FOnlineSessionSearchResult si = results[i];
 			FString roomName;
 			si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);
-			FBase64::Decode(roomName, roomName);
+			//UE_LOG(LogTemp, Warning, TEXT("%d name : %s, count : %d"), i, *roomName, si.Session.NumOpenPublicConnections);
+
+			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- "), *roomName);
+		
+			
+			TArray<uint8> arrayData;
+			FBase64::Decode(roomName, arrayData);
+			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData.Num());
+
+			std::string s((char*)(arrayData.GetData()), arrayData.Num());
+			FString ss = UTF8_TO_TCHAR(s.c_str());
+			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *ss, arrayData.Num());
+
+			/*si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), arrayData2);
+			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData2.Num());
+
+			std::string s((char*)(arrayData2.GetData()), arrayData2.Num());
+			FString ss = UTF8_TO_TCHAR(s.c_str());
+			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *ss, arrayData2.Num());*/
 
 			// 技记 沥焊 ---> String 栏肺 
 			// 技记狼 弥措 牢盔
