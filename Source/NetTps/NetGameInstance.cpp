@@ -52,7 +52,7 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	TArray<uint8> arrayData = TArray<uint8>(bytes.data(), bytes.size());
 
 	// д©╫╨ер ©и╪г
-	FString base64Data = FBase64::Encode(arrayData);
+	FString base64Data = FBase64::Encode(roomName);
 	/*TArray<uint8> arrayData2;
 	FBase64::Decode(base64Data, arrayData2);
 	*/
@@ -132,12 +132,12 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 		
 			
 			TArray<uint8> arrayData;
-			FBase64::Decode(roomName, arrayData);
+			FBase64::Decode(roomName, roomName);
 			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData.Num());
 
 			std::string s((char*)(arrayData.GetData()), arrayData.Num());
 			FString ss = UTF8_TO_TCHAR(s.c_str());
-			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *ss, arrayData.Num());
+			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *roomName, arrayData.Num());
 
 			/*si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), arrayData2);
 			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData2.Num());
