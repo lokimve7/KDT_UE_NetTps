@@ -47,17 +47,8 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	// 인원 수 
 	sessionSettings.NumPublicConnections = maxPlayer;
 
-	// 변환 (FString -> std::string -> Tarray<uint8> -> base64)
-	std::string strRoomName = TCHAR_TO_UTF8(*roomName);
-	//std::vector<uint8> bytes(strRoomName.begin(), strRoomName.end());
-	TArray<uint8> arrayData = TArray<uint8>((uint8*)(strRoomName.c_str()), strRoomName.length());
-	// 커스텀 옵션
-	FString base64Data = FBase64::Encode(arrayData);
-	UE_LOG(LogTemp, Warning, TEXT("%s "), *base64Data);
 
-	sessionSettings.Set(FName("ROOM_NAME"), base64Data, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-
-	
+	sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);	
 
 
 	// 세션 생성 요청
@@ -65,7 +56,7 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 
 	int32 rand = FMath::RandRange(1, 100000);
 	mySessionName += FString::Printf(TEXT("%d"), rand);
-	sessionInterface->CreateSession(*netID, FName(*mySessionName), sessionSettings);
+	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
 }
 
 void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -84,7 +75,7 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 
 void UNetGameInstance::DestroyMySession()
 {
-	sessionInterface->DestroySession(FName(*mySessionName));
+	sessionInterface->DestroySession(FName(mySessionName));
 }
 
 void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
@@ -122,20 +113,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 		{
 			FOnlineSessionSearchResult si = results[i];
 			FString roomName;
-			si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);
-			//UE_LOG(LogTemp, Warning, TEXT("%d name : %s, count : %d"), i, *roomName, si.Session.NumOpenPublicConnections);
-
-			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- "), *roomName);
-			
-			TArray<uint8> arrayData;
-			FBase64::Decode(roomName, arrayData);
-			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData.Num());
-
-			std::string s((char*)(arrayData.GetData()), arrayData.Num());
-			roomName = UTF8_TO_TCHAR(s.c_str());
-			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *roomName, arrayData.Num());
-						
-
+			si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);								
 			// 세션 정보 ---> String 으로 
 			// 세션의 최대 인원
 			int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
@@ -178,7 +156,7 @@ void UNetGameInstance::JoinOtherSession(int32 idx)
 
 	}
 	UE_LOG(LogTemp, Warning, TEXT("results count : %d, idx : %d"), results.Num(), idx);
-	sessionInterface->JoinSession(0, FName(*mySessionName), results[idx]);
+	sessionInterface->JoinSession(0, FName(mySessionName), results[idx]);
 }
 
 void UNetGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type result)
