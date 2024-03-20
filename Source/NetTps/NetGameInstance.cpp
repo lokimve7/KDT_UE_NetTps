@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "NetGameInstance.h"
@@ -6,20 +6,20 @@
 #include <OnlineSessionSettings.h>
 #include <Online/OnlineSessionNames.h>
 
-// OnlineSessionInterface ÅëÇØ¼­ ÇÑ´Ù.
-// ¼¼¼ÇÀ» ¸¸µç´Ù. 
-// ¼¼¼ÇÀ» °Ë»ö
-// ¼¼¼ÇÀ» Âü¿©
+// OnlineSessionInterface í†µí•´ì„œ í•œë‹¤.
+// ì„¸ì…˜ì„ ë§Œë“ ë‹¤. 
+// ì„¸ì…˜ì„ ê²€ìƒ‰
+// ì„¸ì…˜ì„ ì°¸ì—¬
 
 void UNetGameInstance::Init()
 {
 	Super::Init();
 
-	// ¿Â¶óÀÎ ¼­ºê ½Ã½ºÅÛ °¡Á®¿ÀÀÚ
+	// ì˜¨ë¼ì¸ ì„œë¸Œ ì‹œìŠ¤í…œ ê°€ì ¸ì˜¤ì
 	IOnlineSubsystem* subsys = IOnlineSubsystem::Get();
 	if (subsys)
 	{
-		// ¼¼¼Ç ÀÎÅÍÆäÀÌ½º °¡Á®¿ÀÀÚ
+		// ì„¸ì…˜ ì¸í„°í˜ì´ìŠ¤ ê°€ì ¸ì˜¤ì
 		sessionInterface = subsys->GetSessionInterface();
 		sessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnCreateSessionComplete);
 		sessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UNetGameInstance::OnDestroySessionComplete);
@@ -32,27 +32,27 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 {
 	FOnlineSessionSettings sessionSettings;
 
-	// true ¼¼¼ÇÀÌ °Ë»ö µÈ´Ù.
+	// true ì„¸ì…˜ì´ ê²€ìƒ‰ ëœë‹¤.
 	sessionSettings.bShouldAdvertise = true;
 
-	// steam »ç¿ëÇÏ¸é ÇØ´ç ¿É¼ÇÀÌ true ¼¼¼ÇÀ» ¸¸µé ¼ö ÀÖ´Ù.
+	// steam ì‚¬ìš©í•˜ë©´ í•´ë‹¹ ì˜µì…˜ì´ true ì„¸ì…˜ì„ ë§Œë“¤ ìˆ˜ ìˆë‹¤.
 	sessionSettings.bUseLobbiesIfAvailable = true;
 
-	// ³»°¡ °ÔÀÓÁßÀÎ ¾Æ´ÑÁö¸¦ º¸¿©ÁÙ°ÇÁö
+	// ë‚´ê°€ ê²Œì„ì¤‘ì¸ ì•„ë‹Œì§€ë¥¼ ë³´ì—¬ì¤„ê±´ì§€
 	sessionSettings.bUsesPresence = true;
-	// °ÔÀÓ ÇÃ·¹ÀÌ Áß¿¡ Âü¿©ÇÒ ¼ö ÀÖ°Ô
+	// ê²Œì„ í”Œë ˆì´ ì¤‘ì— ì°¸ì—¬í•  ìˆ˜ ìˆê²Œ
 	sessionSettings.bAllowJoinInProgress = true;
 	sessionSettings.bAllowJoinViaPresence = true;
 		
-	// ÀÎ¿ø ¼ö 
+	// ì¸ì› ìˆ˜ 
 	sessionSettings.NumPublicConnections = maxPlayer;
 
-	std::string strRoomName = TCHAR_TO_UTF8(*roomName);
+	/*std::string strRoomName = TCHAR_TO_UTF8(*roomName);
 	std::vector<uint8> bytes(strRoomName.begin(), strRoomName.end());
-	TArray<uint8> arrayData = TArray<uint8>(bytes.data(), bytes.size());
+	TArray<uint8> arrayData = TArray<uint8>(bytes.data(), bytes.size());*/
 
-	// Ä¿½ºÅÒ ¿É¼Ç
-	FString base64Data = FBase64::Encode(arrayData);
+	// ì»¤ìŠ¤í…€ ì˜µì…˜
+	FString base64Data = FBase64::Encode(roomName);
 	UE_LOG(LogTemp, Warning, TEXT("%s "), *base64Data);
 
 	sessionSettings.Set(FName("ROOM_NAME"), base64Data, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
@@ -60,7 +60,7 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	
 
 
-	// ¼¼¼Ç »ı¼º ¿äÃ»
+	// ì„¸ì…˜ ìƒì„± ìš”ì²­
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
 
 	int32 rand = FMath::RandRange(1, 100000);
@@ -73,7 +73,7 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 	if (bWasSuccessful)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete Success -- %s"), *SessionName.ToString());
-		// Battle Map À¸·Î ÀÌµ¿ÇÏÀÚ
+		// Battle Map ìœ¼ë¡œ ì´ë™í•˜ì
 		GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/BattleMap?listen"));
 	}
 	else
@@ -107,7 +107,7 @@ void UNetGameInstance::FindOtherSession()
 
 	sessionSearch->MaxSearchResults = 10;
 
-	// ¼¼¼Ç °Ë»ö ¿äÃ»
+	// ì„¸ì…˜ ê²€ìƒ‰ ìš”ì²­
 	sessionInterface->FindSessions(0, sessionSearch.ToSharedRef());
 }
 
@@ -129,12 +129,12 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 		
 			
 			TArray<uint8> arrayData;
-			FBase64::Decode(roomName, arrayData);
+			FBase64::Decode(roomName, roomName);
 			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData.Num());
 
-			std::string s((char*)(arrayData.GetData()), arrayData.Num());
+			/*std::string s((char*)(arrayData.GetData()), arrayData.Num());
 			roomName = UTF8_TO_TCHAR(s.c_str());
-			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *roomName, arrayData.Num());
+			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *roomName, arrayData.Num());*/
 
 			/*si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), arrayData2);
 			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData2.Num());
@@ -143,14 +143,14 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			FString ss = UTF8_TO_TCHAR(s.c_str());
 			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *ss, arrayData2.Num());*/
 
-			// ¼¼¼Ç Á¤º¸ ---> String À¸·Î 
-			// ¼¼¼ÇÀÇ ÃÖ´ë ÀÎ¿ø
+			// ì„¸ì…˜ ì •ë³´ ---> String ìœ¼ë¡œ 
+			// ì„¸ì…˜ì˜ ìµœëŒ€ ì¸ì›
 			int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
-			// ¼¼¼ÇÀÇ Âü¿© ÀÎ¿ø (ÃÖ´ë ÀÎ¿ø - ³²Àº ÀÎ¿ø)
+			// ì„¸ì…˜ì˜ ì°¸ì—¬ ì¸ì› (ìµœëŒ€ ì¸ì› - ë‚¨ì€ ì¸ì›)
 
 			int32 currPlayer = maxPlayer - si.Session.NumOpenPublicConnections;
 
-			// ¹æÀÌ¸§ ( 5 / 10 )
+			// ë°©ì´ë¦„ ( 5 / 10 )
 			FString sessionInfo = FString::Printf(
 				TEXT("%s ( %d / %d )"), 
 				*roomName, currPlayer, maxPlayer);
@@ -194,13 +194,13 @@ void UNetGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnJoinSessionComplete Success : %s"), *SessionName.ToString());
 		FString url;
-		// Âü¿©ÇØ¾ß ÇÏ´Â Listen ¼­¹ö URLÀ» ¹Ş¾Æ ¿ÀÀÚ
+		// ì°¸ì—¬í•´ì•¼ í•˜ëŠ” Listen ì„œë²„ URLì„ ë°›ì•„ ì˜¤ì
 		sessionInterface->GetResolvedConnectString(SessionName, url);
 		UE_LOG(LogTemp, Warning, TEXT("Join session URL : %s"), *url);
 		
 		if (!url.IsEmpty())
 		{
-			// ÇØ´ç URL ·Î Á¢¼ÓÇÏÀÚ
+			// í•´ë‹¹ URL ë¡œ ì ‘ì†í•˜ì
 			APlayerController* pc = GetWorld()->GetFirstPlayerController();
 			pc->ClientTravel(url, ETravelType::TRAVEL_Absolute);
 		}
