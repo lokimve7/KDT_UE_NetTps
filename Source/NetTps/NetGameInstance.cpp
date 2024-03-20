@@ -62,7 +62,7 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 
 	int32 rand = FMath::RandRange(1, 100000);
 	mySessionName += FString::Printf(TEXT("%d"), rand);
-	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
+	sessionInterface->CreateSession(*netID, FName(*mySessionName), sessionSettings);
 }
 
 void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -81,7 +81,7 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 
 void UNetGameInstance::DestroyMySession()
 {
-	sessionInterface->DestroySession(FName(mySessionName));
+	sessionInterface->DestroySession(FName(*mySessionName));
 }
 
 void UNetGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
@@ -175,7 +175,7 @@ void UNetGameInstance::JoinOtherSession(int32 idx)
 
 	}
 	UE_LOG(LogTemp, Warning, TEXT("results count : %d, idx : %d"), results.Num(), idx);
-	sessionInterface->JoinSession(0, FName(mySessionName), results[idx]);
+	sessionInterface->JoinSession(0, FName(*mySessionName), results[idx]);
 }
 
 void UNetGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type result)
