@@ -51,10 +51,11 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	std::vector<uint8> bytes(strRoomName.begin(), strRoomName.end());
 	TArray<uint8> arrayData = TArray<uint8>(bytes.data(), bytes.size());
 
-	
-
 	// 커스텀 옵션
 	sessionSettings.Set(FName(TEXT("ROOM_NAME")), arrayData, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+
+	
+
 
 	// 세션 생성 요청
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
@@ -121,10 +122,16 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			TArray<uint8> arrayData;
 			si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), arrayData);
 			//UE_LOG(LogTemp, Warning, TEXT("%d name : %s, count : %d"), i, *roomName, si.Session.NumOpenPublicConnections);
+
+			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData.Num());
 			
-			std::string s((char*)(arrayData.GetData()), arrayData.Num());
+			TArray<uint8> arrayData2;
+			si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), arrayData2);
+			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData2.Num());
+
+			std::string s((char*)(arrayData2.GetData()), arrayData2.Num());
 			FString ss = UTF8_TO_TCHAR(s.c_str());
-			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *ss, arrayData.Num());
+			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *ss, arrayData2.Num());
 
 			// 세션 정보 ---> String 으로 
 			// 세션의 최대 인원
