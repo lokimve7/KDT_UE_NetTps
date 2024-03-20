@@ -52,7 +52,7 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	TArray<uint8> arrayData = TArray<uint8>(bytes.data(), bytes.size());
 
 	// д©╫╨ер ©и╪г
-	sessionSettings.Set(FName("ROOM_NAME"), arrayData, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 	
 
@@ -120,10 +120,10 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			FOnlineSessionSearchResult si = results[i];
 			FString roomName;
 			TArray<uint8> arrayData;
-			si.Session.SessionSettings.Get(FName("ROOM_NAME"), arrayData);
+			si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);
 			//UE_LOG(LogTemp, Warning, TEXT("%d name : %s, count : %d"), i, *roomName, si.Session.NumOpenPublicConnections);
 
-			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData.Num());
+			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- "), *roomName);
 		/*
 			TArray<uint8> arrayData2;
 			si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), arrayData2);
