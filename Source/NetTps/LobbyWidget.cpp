@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "LobbyWidget.h"
@@ -19,25 +19,25 @@ void ULobbyWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// game instance °¡Á®¿ÀÀÚ
+	// game instance ê°€ì ¸ì˜¤ì
 	gi = Cast<UNetGameInstance>(GetGameInstance());
 	
 
-	// ¸ŞÀÎ È­¸é ±â´Éµé
+	// ë©”ì¸ í™”ë©´ ê¸°ëŠ¥ë“¤
 	btn_MoveCreateSession->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickMoveCreateSession);
 	btn_MoveSearchSession->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickMoveSearchSession);
 
 
-	// ¼¼¼Ç »ı¼º È­¸é ±â´Éµé
+	// ì„¸ì…˜ ìƒì„± í™”ë©´ ê¸°ëŠ¥ë“¤
 
-	// text_PlayerCount ¸¦ ÃÊ±â°ªÀÌ 2·Î ¼³Á¤
+	// text_PlayerCount ë¥¼ ì´ˆê¸°ê°’ì´ 2ë¡œ ì„¤ì •
 	text_PlayerCount->SetText(FText::AsNumber(slider_PlayerCount->GetValue()));
-	// Slider ÀÇ °ªÀÌ º¯°æµÉ ¶§ ÇÔ¼ö µî·Ï
+	// Slider ì˜ ê°’ì´ ë³€ê²½ë  ë•Œ í•¨ìˆ˜ ë“±ë¡
 	slider_PlayerCount->OnValueChanged.AddDynamic(this, &ULobbyWidget::OnValueChanged);
 
 	btn_CreateSession->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickCreateSession);
 
-	// ¼¼¼Ç °Ë»ö È­¸é ±â´Éµé
+	// ì„¸ì…˜ ê²€ìƒ‰ í™”ë©´ ê¸°ëŠ¥ë“¤
 	btn_FindSession->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickFindSession);
 
 	gi->onSearchComplete.BindUObject(this, &ULobbyWidget::OnSearchComplete);
@@ -45,7 +45,7 @@ void ULobbyWidget::NativeConstruct()
 
 void ULobbyWidget::OnClickMoveCreateSession()
 {
-	// widget switcher ¸¦ ÀÌ¿ëÇØ¼­ 1¹øÂ° Widget ÀÌ È°¼ºÈ­ µÇ¶ó!
+	// widget switcher ë¥¼ ì´ìš©í•´ì„œ 1ë²ˆì§¸ Widget ì´ í™œì„±í™” ë˜ë¼!
 	widgetSwitcher->SetActiveWidgetIndex(1);
 	
 	APlayerState* ps = UGameplayStatics::GetPlayerState(GetWorld(), 0);
@@ -54,13 +54,13 @@ void ULobbyWidget::OnClickMoveCreateSession()
 
 void ULobbyWidget::OnClickMoveSearchSession()
 {
-	// widget switcher ¸¦ ÀÌ¿ëÇØ¼­ 2¹øÂ° Widget ÀÌ È°¼ºÈ­ µÇ¶ó!
+	// widget switcher ë¥¼ ì´ìš©í•´ì„œ 2ë²ˆì§¸ Widget ì´ í™œì„±í™” ë˜ë¼!
 	widgetSwitcher->SetActiveWidgetIndex(2);
 }
 
 void ULobbyWidget::OnValueChanged(float Value)
 {
-	// player count ÅØ½ºÆ® °»½Å
+	// player count í…ìŠ¤íŠ¸ ê°±ì‹ 
 	text_PlayerCount->SetText(FText::AsNumber(Value));
 }
 
@@ -78,10 +78,10 @@ void ULobbyWidget::OnClickFindSession()
 
 void ULobbyWidget::OnSearchComplete(int32 idx, FString info)
 {
-	// SessionInfoWidget »ı¼º
+	// SessionInfoWidget ìƒì„±
 	auto widget = CreateWidget<USessionInfoWidget>(GetWorld(), sessionInfoWidgetFactory);
-	// Scroll_RoomList ¿¡ Ãß°¡
+	// Scroll_RoomList ì— ì¶”ê°€
 	scroll_RoomList->AddChild(widget);
-	// ¸¸µé¾îÁø sessionInfo ¿¡ µ¥ÀÌÅÍ¸¦ ¼ÂÆÃ
+	// ë§Œë“¤ì–´ì§„ sessionInfo ì— ë°ì´í„°ë¥¼ ì…‹íŒ…
 	widget->SetInfo(idx, info);
 }

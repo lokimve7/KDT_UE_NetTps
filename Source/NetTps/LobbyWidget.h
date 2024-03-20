@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,7 +18,7 @@ public:
 	virtual void NativeConstruct() override;
 
 public:
-	// game instance ´ãÀ» º¯¼ö
+	// game instance ë‹´ì„ ë³€ìˆ˜
 	UPROPERTY()
 	class UNetGameInstance* gi;
 
@@ -26,7 +26,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UWidgetSwitcher* widgetSwitcher;
 
-	// ¸ŞÀÎÈ­¸é
+	// ë©”ì¸í™”ë©´
 	UPROPERTY(meta = (BindWidget))
 	class UButton* btn_MoveCreateSession;
 	UPROPERTY(meta = (BindWidget))
@@ -38,7 +38,7 @@ public:
 	void OnClickMoveSearchSession();
 
 
-	// ¼¼¼Ç »ı¼º È­¸é
+	// ì„¸ì…˜ ìƒì„± í™”ë©´
 	UPROPERTY(meta = (BindWidget))
 	class UEditableTextBox* edit_SessionName;
 	UPROPERTY(meta = (BindWidget))
@@ -54,7 +54,7 @@ public:
 	void OnClickCreateSession();
 
 	
-	// ¼¼¼Ç °Ë»ö / Âü¿© È­¸é
+	// ì„¸ì…˜ ê²€ìƒ‰ / ì°¸ì—¬ í™”ë©´
 	UPROPERTY(meta = (BindWidget))
 	class UButton* btn_FindSession;
 	UPROPERTY(meta = (BindWidget))
@@ -66,7 +66,7 @@ public:
 	UFUNCTION()
 	void OnClickFindSession();
 
-	// ¼¼¼Ç °Ë»ö ¿Ï·áµÇ¸é È£ÃâµÇ´Â ÇÔ¼ö
+	// ì„¸ì…˜ ê²€ìƒ‰ ì™„ë£Œë˜ë©´ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
 	UFUNCTION()
 	void OnSearchComplete(int32 idx, FString info);
 };

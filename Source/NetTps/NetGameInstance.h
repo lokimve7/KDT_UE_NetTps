@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,36 +23,36 @@ class NETTPS_API UNetGameInstance : public UGameInstance
 public:
 	virtual void Init() override;
 
-	// ¼¼¼Ç ¸¸µå´Â ÇÔ¼ö
+	// ì„¸ì…˜ ë§Œë“œëŠ” í•¨ìˆ˜
 	UFUNCTION(BlueprintCallable)
 	void CreateMySession(FString roomName, int32 maxPlayer);
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 
-	// ¼¼¼Ç ÆÄ±«ÇÏ´Â ÇÔ¼ö
+	// ì„¸ì…˜ íŒŒê´´í•˜ëŠ” í•¨ìˆ˜
 	UFUNCTION(BlueprintCallable)
 	void DestroyMySession();
 	void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
 
-	// ¼¼¼ÇÀ» °Ë»ö ÇÔ¼ö
+	// ì„¸ì…˜ì„ ê²€ìƒ‰ í•¨ìˆ˜
 	UFUNCTION(BlueprintCallable)
 	void FindOtherSession();
 	void OnFindSessionComplete(bool bWasSuccessful);
 
-	// ¼¼¼Ç Âü¿© ÇÔ¼ö
+	// ì„¸ì…˜ ì°¸ì—¬ í•¨ìˆ˜
 	UFUNCTION(BlueprintCallable)
 	void JoinOtherSession(int32 idx);
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type result);
 
 public:
-	// ÀÌ º¯¼öÅëÇØ (¼¼¼Ç ¸¸µé°í, ¼¼¼Ç °Ë»ö, ¼¼¼Ç Âü¿©)
+	// ì´ ë³€ìˆ˜í†µí•´ (ì„¸ì…˜ ë§Œë“¤ê³ , ì„¸ì…˜ ê²€ìƒ‰, ì„¸ì…˜ ì°¸ì—¬)
 	TSharedPtr<class IOnlineSession, ESPMode::ThreadSafe> sessionInterface;
 
-	// ¼¼¼Ç °Ë»ö¿¡ ¾²ÀÌ´Â Å¬·¡½º
+	// ì„¸ì…˜ ê²€ìƒ‰ì— ì“°ì´ëŠ” í´ë˜ìŠ¤
 	TSharedPtr<class FOnlineSessionSearch> sessionSearch;
 
-	// ¼¼¼Ç ÀÌ¸§
+	// ì„¸ì…˜ ì´ë¦„
 	FString mySessionName = TEXT("lokimve7");
 
-	// ¼¼¼Ç °Ë»öÀÌ ¿Ï·áµÇ¸é È£ÃâÇØ¾ß ÇÏ´Â Delegate
+	// ì„¸ì…˜ ê²€ìƒ‰ì´ ì™„ë£Œë˜ë©´ í˜¸ì¶œí•´ì•¼ í•˜ëŠ” Delegate
 	FSearchComplete onSearchComplete;
 };
