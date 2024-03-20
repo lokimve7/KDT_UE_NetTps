@@ -52,7 +52,13 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	TArray<uint8> arrayData = TArray<uint8>(bytes.data(), bytes.size());
 
 	// д©╫╨ер ©и╪г
-	sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	FString base64Data = FBase64::Encode(arrayData);
+	/*TArray<uint8> arrayData2;
+	FBase64::Decode(base64Data, arrayData2);
+	*/
+	UE_LOG(LogTemp, Warning, TEXT("%s "), *base64Data);
+
+	sessionSettings.Set(FName("ROOM_NAME"), base64Data, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 	
 
@@ -119,14 +125,21 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 		{
 			FOnlineSessionSearchResult si = results[i];
 			FString roomName;
-			TArray<uint8> arrayData;
 			si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);
 			//UE_LOG(LogTemp, Warning, TEXT("%d name : %s, count : %d"), i, *roomName, si.Session.NumOpenPublicConnections);
 
 			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- "), *roomName);
-		/*
-			TArray<uint8> arrayData2;
-			si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), arrayData2);
+		
+			
+			TArray<uint8> arrayData;
+			FBase64::Decode(roomName, arrayData);
+			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData.Num());
+
+			std::string s((char*)(arrayData.GetData()), arrayData.Num());
+			FString ss = UTF8_TO_TCHAR(s.c_str());
+			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *ss, arrayData.Num());
+
+			/*si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), arrayData2);
 			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData2.Num());
 
 			std::string s((char*)(arrayData2.GetData()), arrayData2.Num());
