@@ -105,6 +105,9 @@ protected:
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	// 최초에 한번 변수가 동기화 되고 나서 호출되는 함수
+	virtual void PostNetInit() override;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void PrintNetLog();
@@ -128,7 +131,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	float takeGunDist = 200;
 
-	UPROPERTY()
+	UPROPERTY(Replicated, VisibleAnywhere)
 	AActor* closestPistol;
 
 	UPROPERTY(EditAnywhere)

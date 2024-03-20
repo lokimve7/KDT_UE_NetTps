@@ -143,7 +143,7 @@ void UNetGameInstance::JoinOtherSession(int32 idx)
 {
 	//TArray<FOnlineSessionSearchResult> 
 	auto results = sessionSearch->SearchResults;
-	sessionInterface->JoinSession(0, FName(mySessionName), results[0]);
+	sessionInterface->JoinSession(0, FName(mySessionName), results[idx]);
 }
 
 void UNetGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type result)

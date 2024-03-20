@@ -1,10 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "SessionInfoWidget.h"
 
 #include <Components/Button.h>
 #include <Components/TextBlock.h>
+
+#include "NetGameInstance.h"
 
 
 void USessionInfoWidget::NativeConstruct()
@@ -16,12 +18,14 @@ void USessionInfoWidget::NativeConstruct()
 
 void USessionInfoWidget::OnClickJoinSession()
 {
+	auto gi = Cast<UNetGameInstance>(GetGameInstance());
+	gi->JoinOtherSession(sessionIdx);
 }
 
 void USessionInfoWidget::SetInfo(int32 idx, FString info)
 {
-	// ¸î ¹øÂ° ¼¼¼ÇÀÎÁö ´ã¾Æ³õÀÚ
+	// ëª‡ ë²ˆì§¸ ì„¸ì…˜ì¸ì§€ ë‹´ì•„ë†“ìž
 	sessionIdx = idx;
-	// È­¸é¿¡ º¸ÀÌ´Â Á¤º¸ °»½Å
+	// í™”ë©´ì— ë³´ì´ëŠ” ì •ë³´ ê°±ì‹ 
 	text_SessionInfo->SetText(FText::FromString(info));
 }

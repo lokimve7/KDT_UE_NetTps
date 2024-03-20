@@ -12,11 +12,12 @@
 
 #include <Components/WidgetComponent.h>
 #include <Net/UnrealNetwork.h>
-#include "Kismet/GameplayStatics.h"
+#include <Kismet/KismetMathLibrary.h>
+#include <Kismet/GameplayStatics.h>
+
 #include "NetPlayerAnimInstance.h"
 #include "MainWidget.h"
 #include "HealthBar.h"
-#include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
 #include "SimpleCube.h"
 #include "NetTpsGameMode.h"
 
@@ -139,12 +140,30 @@ void ANetTpsCharacter::PossessedBy(AController* NewController)
 	ClientRPC_CreateWidget();
 }
 
+void ANetTpsCharacter::PostNetInit()
+{
+	Super::PostNetInit();
+
+	if (anim == nullptr)
+	{
+		// AnimInstance 가져오자
+		anim = Cast<UNetPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	}
+
+	// 만약에 총을 들고 있다면
+	if (closestPistol)
+	{
+		// 총을 붙여라
+		AttachPistol(closestPistol);
+	}
+}
+
 void ANetTpsCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ANetTpsCharacter, currHP);
-
+	DOREPLIFETIME(ANetTpsCharacter, closestPistol);
 }
 
 void ANetTpsCharacter::PrintNetLog()
