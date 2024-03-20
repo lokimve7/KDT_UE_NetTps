@@ -57,7 +57,16 @@ public:
 	// 세션 검색 / 참여 화면
 	UPROPERTY(meta = (BindWidget))
 	class UButton* btn_FindSession;
+	UPROPERTY(meta = (BindWidget))
+	class UScrollBox* scroll_RoomList;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<class USessionInfoWidget> sessionInfoWidgetFactory;
 	
 	UFUNCTION()
 	void OnClickFindSession();
+
+	// 세션 검색 완료되면 호출되는 함수
+	UFUNCTION()
+	void OnSearchComplete(int32 idx, FString info);
 };

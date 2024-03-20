@@ -8,8 +8,10 @@
 #include <Components/Slider.h>
 #include <Components/TextBlock.h>
 #include <Components/EditableTextBox.h>
+#include <Components/ScrollBox.h>
 
 #include "NetGameInstance.h"
+#include "SessionInfoWidget.h"
 
 void ULobbyWidget::NativeConstruct()
 {
@@ -17,7 +19,6 @@ void ULobbyWidget::NativeConstruct()
 
 	// game instance 가져오자
 	gi = Cast<UNetGameInstance>(GetGameInstance());
-
 	
 
 	// 메인 화면 기능들
@@ -33,6 +34,11 @@ void ULobbyWidget::NativeConstruct()
 	slider_PlayerCount->OnValueChanged.AddDynamic(this, &ULobbyWidget::OnValueChanged);
 
 	btn_CreateSession->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickCreateSession);
+
+	// 세션 검색 화면 기능들
+	btn_FindSession->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickFindSession);
+
+	gi->onSearchComplete.BindUObject(this, &ULobbyWidget::OnSearchComplete);
 }
 
 void ULobbyWidget::OnClickMoveCreateSession()
@@ -63,4 +69,14 @@ void ULobbyWidget::OnClickCreateSession()
 void ULobbyWidget::OnClickFindSession()
 {
 	gi->FindOtherSession();
+}
+
+void ULobbyWidget::OnSearchComplete(int32 idx, FString info)
+{
+	// SessionInfoWidget 생성
+	auto widget = CreateWidget<USessionInfoWidget>(GetWorld(), sessionInfoWidgetFactory);
+	// Scroll_RoomList 에 추가
+	scroll_RoomList->AddChild(widget);
+	// 만들어진 sessionInfo 에 데이터를 셋팅
+	widget->SetInfo(idx, info);
 }

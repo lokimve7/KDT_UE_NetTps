@@ -18,6 +18,8 @@ public:
 	virtual void NativeConstruct() override;
 
 public:
+	int32 sessionIdx;
+
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* text_SessionInfo;
 
@@ -26,4 +28,6 @@ public:
 
 	UFUNCTION()
 	void OnClickJoinSession();
+
+	void SetInfo(int32 idx, FString info);
 };

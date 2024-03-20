@@ -37,6 +37,9 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 
 	// steam 사용하면 해당 옵션이 true 세션을 만들 수 있다.
 	sessionSettings.bUseLobbiesIfAvailable = true;
+
+	// 
+	sessionSettings.bAllowJoinViaPresence = true;
 		
 	// 인원 수 
 	sessionSettings.NumPublicConnections = maxPlayer;
@@ -108,6 +111,19 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			FString roomName;
 			si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), roomName);
 			UE_LOG(LogTemp, Warning, TEXT("%d name : %s"), i, *roomName);
+			
+			// 세션 정보 ---> String 으로 
+			// 세션의 최대 인원
+			int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
+			// 세션의 참여 인원 (최대 인원 - 남은 인원)
+			int32 currPlayer = maxPlayer - si.Session.NumOpenPublicConnections;
+
+			// 방이름 ( 5 / 10 )
+			FString sessionInfo = FString::Printf(
+				TEXT("%s ( %d / %d )"), 
+				*roomName, currPlayer, maxPlayer);
+
+			onSearchComplete.ExecuteIfBound(i, sessionInfo);
 		}
 
 		

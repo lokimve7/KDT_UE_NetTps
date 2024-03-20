@@ -12,6 +12,9 @@
 /**
  * 
  */
+
+ DECLARE_DELEGATE_TwoParams(FSearchComplete, int32, FString);
+
 UCLASS()
 class NETTPS_API UNetGameInstance : public UGameInstance
 {
@@ -49,4 +52,7 @@ public:
 
 	// 세션 이름
 	FString mySessionName = TEXT("lokimve7");
+
+	// 세션 검색이 완료되면 호출해야 하는 Delegate
+	FSearchComplete onSearchComplete;
 };
