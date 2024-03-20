@@ -133,8 +133,8 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData.Num());
 
 			std::string s((char*)(arrayData.GetData()), arrayData.Num());
-			FString ss = UTF8_TO_TCHAR(s.c_str());
-			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *ss, arrayData.Num());
+			roomName = UTF8_TO_TCHAR(s.c_str());
+			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- %d"), *roomName, arrayData.Num());
 
 			/*si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), arrayData2);
 			UE_LOG(LogTemp, Warning, TEXT("----- %d ----- "), arrayData2.Num());
