@@ -13,5 +13,17 @@ UCLASS()
 class NETTPS_API USessionInfoWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual void NativeConstruct() override;
+
+public:
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* text_SessionInfo;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btn_JoinSession;
+
+	UFUNCTION()
+	void OnClickJoinSession();
 };
