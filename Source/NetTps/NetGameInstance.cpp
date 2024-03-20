@@ -47,12 +47,12 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	// 인원 수 
 	sessionSettings.NumPublicConnections = maxPlayer;
 
-	// 변환
+	// 변환 (FString -> std::string -> Tarray<uint8> -> base64)
 	std::string strRoomName = TCHAR_TO_UTF8(*roomName);
-	/*std::vector<uint8> bytes(strRoomName.begin(), strRoomName.end());
-	TArray<uint8> arrayData = TArray<uint8>(bytes.data(), bytes.size());*/
+	//std::vector<uint8> bytes(strRoomName.begin(), strRoomName.end());
+	TArray<uint8> arrayData = TArray<uint8>((uint8*)(strRoomName.c_str()), strRoomName.length());
 	// 커스텀 옵션
-	FString base64Data = FBase64::Encode(strRoomName.c_str());
+	FString base64Data = FBase64::Encode(arrayData);
 	UE_LOG(LogTemp, Warning, TEXT("%s "), *base64Data);
 
 	sessionSettings.Set(FName("ROOM_NAME"), base64Data, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
@@ -125,7 +125,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);
 			//UE_LOG(LogTemp, Warning, TEXT("%d name : %s, count : %d"), i, *roomName, si.Session.NumOpenPublicConnections);
 
-		
+			UE_LOG(LogTemp, Warning, TEXT("----- %s ----- "), *roomName);
 			
 			TArray<uint8> arrayData;
 			FBase64::Decode(roomName, arrayData);
