@@ -38,7 +38,10 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	// steam 사용하면 해당 옵션이 true 세션을 만들 수 있다.
 	sessionSettings.bUseLobbiesIfAvailable = true;
 
-	// 
+	// 내가 게임중인 아닌지를 보여줄건지
+	sessionSettings.bUsesPresence = true;
+	// 게임 플레이 중에 참여할 수 있게
+	sessionSettings.bAllowJoinInProgress = true;
 	sessionSettings.bAllowJoinViaPresence = true;
 		
 	// 인원 수 
@@ -110,12 +113,13 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			FOnlineSessionSearchResult si = results[i];
 			FString roomName;
 			si.Session.SessionSettings.Get(FName(TEXT("ROOM_NAME")), roomName);
-			UE_LOG(LogTemp, Warning, TEXT("%d name : %s"), i, *roomName);
+			UE_LOG(LogTemp, Warning, TEXT("%d name : %s, count : %d"), i, *roomName, si.Session.NumOpenPublicConnections);
 			
 			// 세션 정보 ---> String 으로 
 			// 세션의 최대 인원
 			int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
 			// 세션의 참여 인원 (최대 인원 - 남은 인원)
+
 			int32 currPlayer = maxPlayer - si.Session.NumOpenPublicConnections;
 
 			// 방이름 ( 5 / 10 )
@@ -126,6 +130,10 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			onSearchComplete.ExecuteIfBound(i, sessionInfo);
 		}
 
+		if (results.Num() > 0)
+		{
+			JoinOtherSession(0);
+		}
 		
 		/*for (auto si : results)
 		{
@@ -143,6 +151,16 @@ void UNetGameInstance::JoinOtherSession(int32 idx)
 {
 	//TArray<FOnlineSessionSearchResult> 
 	auto results = sessionSearch->SearchResults;
+	if (sessionInterface == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("sessionInterface is null"));
+	}
+	if (results.Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("results Zero"));
+
+	}
+	UE_LOG(LogTemp, Warning, TEXT("results count : %d, idx : %d"), results.Num(), idx);
 	sessionInterface->JoinSession(0, FName(mySessionName), results[idx]);
 }
 
