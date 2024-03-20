@@ -54,7 +54,10 @@ public:
 	void OnClickCreateSession();
 
 	
-	// 세션 참여 화면
-
+	// 세션 검색 / 참여 화면
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btn_FindSession;
 	
+	UFUNCTION()
+	void OnClickFindSession();
 };

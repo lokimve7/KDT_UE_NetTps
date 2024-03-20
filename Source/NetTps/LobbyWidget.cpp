@@ -18,6 +18,7 @@ void ULobbyWidget::NativeConstruct()
 	// game instance 가져오자
 	gi = Cast<UNetGameInstance>(GetGameInstance());
 
+	
 
 	// 메인 화면 기능들
 	btn_MoveCreateSession->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickMoveCreateSession);
@@ -42,7 +43,8 @@ void ULobbyWidget::OnClickMoveCreateSession()
 
 void ULobbyWidget::OnClickMoveSearchSession()
 {
-	
+	// widget switcher 를 이용해서 2번째 Widget 이 활성화 되라!
+	widgetSwitcher->SetActiveWidgetIndex(2);
 }
 
 void ULobbyWidget::OnValueChanged(float Value)
@@ -56,4 +58,9 @@ void ULobbyWidget::OnClickCreateSession()
 	gi->CreateMySession(
 			edit_SessionName->GetText().ToString(), 
 			slider_PlayerCount->GetValue());
+}
+
+void ULobbyWidget::OnClickFindSession()
+{
+	gi->FindOtherSession();
 }

@@ -37,7 +37,7 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 
 	// steam 사용하면 해당 옵션이 true 세션을 만들 수 있다.
 	sessionSettings.bUseLobbiesIfAvailable = true;
-	
+		
 	// 인원 수 
 	sessionSettings.NumPublicConnections = maxPlayer;
 
@@ -110,11 +110,7 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 			UE_LOG(LogTemp, Warning, TEXT("%d name : %s"), i, *roomName);
 		}
 
-		if (results.Num() > 0)
-		{
-			JoinOtherSession(0);
-		}
-
+		
 		/*for (auto si : results)
 		{
 			FString roomName;
