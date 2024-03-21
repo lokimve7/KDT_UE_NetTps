@@ -56,6 +56,8 @@ void ULobbyWidget::OnClickMoveSearchSession()
 {
 	// widget switcher 를 이용해서 2번째 Widget 이 활성화 되라!
 	widgetSwitcher->SetActiveWidgetIndex(2);
+	// 바로 검색 시작
+	OnClickFindSession();
 }
 
 void ULobbyWidget::OnValueChanged(float Value)
@@ -73,17 +75,34 @@ void ULobbyWidget::OnClickCreateSession()
 
 void ULobbyWidget::OnClickFindSession()
 {
+	//scroll_RoomList 의 자식들을 지우자
+	scroll_RoomList->ClearChildren();
+
+	/*for(int32 i = 0; i < scroll_RoomList->GetChildrenCount(); i++)
+		scroll_RoomList->RemoveChildAt(0);*/
+	
 	gi->FindOtherSession();
+
+	text_FindSession->SetText(FText::FromString(TEXT("검색중...")));
+	btn_FindSession->SetIsEnabled(false);
 }
 
 void ULobbyWidget::OnSearchComplete(int32 idx, FString info)
 {
-	// SessionInfoWidget 생성
-	auto widget = CreateWidget<USessionInfoWidget>(GetWorld(), sessionInfoWidgetFactory);
-	// Scroll_RoomList 에 추가
-	scroll_RoomList->AddChild(widget);
-	// 만들어진 sessionInfo 에 데이터를 셋팅
-	widget->SetInfo(idx, info);
+	if (idx < 0)
+	{
+		text_FindSession->SetText(FText::FromString(TEXT("세션 검색")));
+		btn_FindSession->SetIsEnabled(true);
+	}
+	else
+	{
+		// SessionInfoWidget 생성
+		auto widget = CreateWidget<USessionInfoWidget>(GetWorld(), sessionInfoWidgetFactory);
+		// Scroll_RoomList 에 추가
+		scroll_RoomList->AddChild(widget);
+		// 만들어진 sessionInfo 에 데이터를 셋팅
+		widget->SetInfo(idx, info);
+	}
 }
 
 void ULobbyWidget::OnClickExit()

@@ -63,6 +63,8 @@ public:
 	class UScrollBox* scroll_RoomList;
 	UPROPERTY(meta = (BindWidget))
 	class UButton* btn_Exit_RoomList;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* text_FindSession;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<class USessionInfoWidget> sessionInfoWidgetFactory;

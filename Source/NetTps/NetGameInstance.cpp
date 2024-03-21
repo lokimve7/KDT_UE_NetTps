@@ -131,7 +131,10 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 
 			onSearchComplete.ExecuteIfBound(i, sessionInfo);
 		}
-			
+		
+		// idx 에 -1 셋팅해서 검색 완료 알려주자
+		onSearchComplete.ExecuteIfBound(-1, TEXT(""));
+
 		
 		/*for (auto si : results)
 		{
