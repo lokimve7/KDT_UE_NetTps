@@ -7,6 +7,10 @@
 #include <Components/HorizontalBox.h>
 #include <Components/Button.h>
 #include <Blueprint/WidgetBlueprintLibrary.h>
+#include <Kismet/GameplayStatics.h>
+#include <GameFramework/PlayerState.h>
+#include <Components/EditableTextBox.h>
+
 #include "NetPlayerController.h"
 
 void UMainWidget::NativeConstruct()
@@ -15,6 +19,8 @@ void UMainWidget::NativeConstruct()
 
 	// 다시하기 버튼 누르면 실행되는 함수 등록
 	btn_Retry->OnClicked.AddDynamic(this, &UMainWidget::OnRetry);
+	// 채팅 보내기 함수 등록
+	btn_Send->OnClicked.AddDynamic(this, &UMainWidget::OnClickSend);
 }
 
 void UMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -35,6 +41,24 @@ void UMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			isShowDamageUI = false;
 		}
 	}	
+}
+
+void UMainWidget::OnClickSend()
+{
+	// 내가 채팅 입력한 내용
+	FString chatContent = edit_Chat->GetText().ToString();
+	// 채팅 내용이 없으면 함수 나가자
+	if(chatContent.IsEmpty()) return;
+
+	auto playerState = UGameplayStatics::GetPlayerState(GetWorld(), 0);
+	FString chat = FString::Printf(
+		TEXT("[%s] : %s"), 
+		*playerState->GetPlayerName(), *chatContent);
+
+	// edit_Chat 의 내용을 지우자
+	edit_Chat->SetText(FText());
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *chat);
 }
 
 void UMainWidget::ShowPistolUI(bool isShow)

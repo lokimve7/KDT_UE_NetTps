@@ -41,9 +41,19 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* btn_Exit;
 
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> bulletFactory;
+
+	// 채팅 관련
+	UPROPERTY(meta = (BindWidget))
+	class UScrollBox* scroll_ChatList;
+	UPROPERTY(meta = (BindWidget))
+	class UEditableTextBox* edit_Chat;
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btn_Send;
+	UFUNCTION()
+	void OnClickSend();
+
 
 public:
 	void ShowPistolUI(bool isShow);
