@@ -47,6 +47,23 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	// 인원 수 
 	sessionSettings.NumPublicConnections = maxPlayer;
 
+	UE_LOG(LogTemp, Warning, TEXT("origin : %s"), *roomName);
+	// Set 할 때 : FString -> UTF8 (std::string) -> TArray<uint8> -> base64 로 Encode
+	std::string strRoomName = TCHAR_TO_UTF8(*roomName);
+	TArray<uint8> arrayData = TArray<uint8>((uint8*)(strRoomName.c_str()), strRoomName.length());
+	roomName = FBase64::Encode(arrayData);
+	UE_LOG(LogTemp, Warning, TEXT("Encode : %s"), *roomName);
+
+	
+	// Get 할 때 : base64 로 Decode -> TArray<uint8> -> TCHAR
+	TArray<uint8> arrayData2;
+	FBase64::Decode(roomName, arrayData2);
+	std::string strRoomName2((char*)(arrayData2.GetData()), arrayData2.Num());
+	roomName = UTF8_TO_TCHAR(strRoomName2.c_str());
+	UE_LOG(LogTemp, Warning, TEXT("복원 : %s"), *roomName);
+
+
+
 
 	sessionSettings.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);	
 
