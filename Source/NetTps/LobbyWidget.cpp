@@ -34,13 +34,13 @@ void ULobbyWidget::NativeConstruct()
 	text_PlayerCount->SetText(FText::AsNumber(slider_PlayerCount->GetValue()));
 	// Slider 의 값이 변경될 때 함수 등록
 	slider_PlayerCount->OnValueChanged.AddDynamic(this, &ULobbyWidget::OnValueChanged);
-
 	btn_CreateSession->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickCreateSession);
+	btn_Exit_CreateSession->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickExit);
 
 	// 세션 검색 화면 기능들
 	btn_FindSession->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickFindSession);
-
 	gi->onSearchComplete.BindUObject(this, &ULobbyWidget::OnSearchComplete);
+	btn_Exit_RoomList->OnClicked.AddDynamic(this, &ULobbyWidget::OnClickExit);
 }
 
 void ULobbyWidget::OnClickMoveCreateSession()
@@ -84,4 +84,9 @@ void ULobbyWidget::OnSearchComplete(int32 idx, FString info)
 	scroll_RoomList->AddChild(widget);
 	// 만들어진 sessionInfo 에 데이터를 셋팅
 	widget->SetInfo(idx, info);
+}
+
+void ULobbyWidget::OnClickExit()
+{
+	widgetSwitcher->SetActiveWidgetIndex(0);
 }

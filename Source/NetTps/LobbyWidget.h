@@ -47,6 +47,8 @@ public:
 	class UTextBlock* text_PlayerCount;
 	UPROPERTY(meta = (BindWidget))
 	class UButton* btn_CreateSession;
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btn_Exit_CreateSession;
 
 	UFUNCTION()
 	void OnValueChanged(float Value);
@@ -59,6 +61,8 @@ public:
 	class UButton* btn_FindSession;
 	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* scroll_RoomList;
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btn_Exit_RoomList;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<class USessionInfoWidget> sessionInfoWidgetFactory;
@@ -69,4 +73,8 @@ public:
 	// 세션 검색 완료되면 호출되는 함수
 	UFUNCTION()
 	void OnSearchComplete(int32 idx, FString info);
+
+	// 메인화면으로
+	UFUNCTION()
+	void OnClickExit();
 };
