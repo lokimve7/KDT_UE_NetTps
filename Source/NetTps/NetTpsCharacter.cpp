@@ -306,6 +306,11 @@ void ANetTpsCharacter::DamageProcess()
 	OnRep_CurrHP();
 }
 
+void ANetTpsCharacter::ShowCursor()
+{
+	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+}
+
 //void ANetTpsCharacter::OnRep_NickName()
 //{
 //	UPlayerNameWidget* widget = Cast<UPlayerNameWidget>(compName->GetWidget());
@@ -378,6 +383,8 @@ void ANetTpsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		EnhancedInputComponent->BindAction(MakeCubeAction, ETriggerEvent::Started, this, &ANetTpsCharacter::MakeCube);
 
+		// 커서 활성화
+		EnhancedInputComponent->BindAction(ShowCursorAction, ETriggerEvent::Started, this, &ANetTpsCharacter::ShowCursor);
 
 	}
 	else

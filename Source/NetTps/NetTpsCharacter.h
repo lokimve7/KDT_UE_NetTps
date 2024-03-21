@@ -56,6 +56,9 @@ class ANetTpsCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MakeCubeAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ShowCursorAction;
+
 public:
 	ANetTpsCharacter();
 	
@@ -169,6 +172,10 @@ public:
 	FString nickName;
 	/*UFUNCTION()
 	void OnRep_NickName();*/
+
+	// 채팅 관련
+	UFUNCTION()
+	void ShowCursor();
 
 
 
