@@ -43,6 +43,11 @@ public:
 	void JoinOtherSession(int32 idx);
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type result);
 
+
+	FString StringBase64Encode(FString str);
+	FString StringBase64Decode(FString str);
+
+
 public:
 	// 이 변수통해 (세션 만들고, 세션 검색, 세션 참여)
 	TSharedPtr<class IOnlineSession, ESPMode::ThreadSafe> sessionInterface;
