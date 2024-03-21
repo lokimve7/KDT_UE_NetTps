@@ -55,12 +55,7 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 maxPlayer)
 	UE_LOG(LogTemp, Warning, TEXT("Encode : %s"), *roomName);
 
 	
-	// Get 할 때 : base64 로 Decode -> TArray<uint8> -> TCHAR
-	TArray<uint8> arrayData2;
-	FBase64::Decode(roomName, arrayData2);
-	std::string strRoomName2((char*)(arrayData2.GetData()), arrayData2.Num());
-	roomName = UTF8_TO_TCHAR(strRoomName2.c_str());
-	UE_LOG(LogTemp, Warning, TEXT("복원 : %s"), *roomName);
+	
 
 
 
@@ -130,7 +125,15 @@ void UNetGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 		{
 			FOnlineSessionSearchResult si = results[i];
 			FString roomName;
-			si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);								
+			si.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);	
+			
+			// Get 할 때 : base64 로 Decode -> TArray<uint8> -> TCHAR
+			TArray<uint8> arrayData;
+			FBase64::Decode(roomName, arrayData);
+			std::string strRoomName((char*)(arrayData.GetData()), arrayData.Num());
+			roomName = UTF8_TO_TCHAR(strRoomName.c_str());
+			UE_LOG(LogTemp, Warning, TEXT("복원 : %s"), *roomName);
+
 			// 세션 정보 ---> String 으로 
 			// 세션의 최대 인원
 			int32 maxPlayer = si.Session.SessionSettings.NumPublicConnections;
