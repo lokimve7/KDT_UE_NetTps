@@ -54,6 +54,9 @@ public:
 	UFUNCTION()
 	void OnClickSend();
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UChatItemWidget> chatItemFactory;
+
 
 public:
 	void ShowPistolUI(bool isShow);

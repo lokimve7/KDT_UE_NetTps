@@ -12,6 +12,8 @@
 #include <Components/EditableTextBox.h>
 
 #include "NetPlayerController.h"
+#include "ChatItemWidget.h"
+#include <../../../../../../../Source/Runtime/UMG/Public/Components/ScrollBox.h>
 
 void UMainWidget::NativeConstruct()
 {
@@ -58,7 +60,10 @@ void UMainWidget::OnClickSend()
 	// edit_Chat 의 내용을 지우자
 	edit_Chat->SetText(FText());
 
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *chat);
+	// ChatItem 만들어서 내용 추가하자.
+	UChatItemWidget* chatItem = CreateWidget<UChatItemWidget>(GetWorld(), chatItemFactory);
+	scroll_ChatList->AddChild(chatItem);
+	chatItem->SetChat(chatContent);
 }
 
 void UMainWidget::ShowPistolUI(bool isShow)
