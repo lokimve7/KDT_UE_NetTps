@@ -176,6 +176,10 @@ public:
 	// 채팅 관련
 	UFUNCTION()
 	void ShowCursor();
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_SendChat(const FString& chat);
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_ReceiveChat(const FString& chat);
 
 
 

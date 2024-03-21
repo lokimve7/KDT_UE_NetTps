@@ -10,10 +10,11 @@
 #include <Kismet/GameplayStatics.h>
 #include <GameFramework/PlayerState.h>
 #include <Components/EditableTextBox.h>
+#include <Components/ScrollBox.h>
 
 #include "NetPlayerController.h"
 #include "ChatItemWidget.h"
-#include <../../../../../../../Source/Runtime/UMG/Public/Components/ScrollBox.h>
+#include "NetTpsCharacter.h"
 
 void UMainWidget::NativeConstruct()
 {
@@ -58,12 +59,20 @@ void UMainWidget::OnClickSend()
 		*playerState->GetPlayerName(), *chatContent);
 
 	// edit_Chat 의 내용을 지우자
-	edit_Chat->SetText(FText());
+	edit_Chat->SetText(FText());	
 
+	// 서버한테 chat 내용을 전달하자.
+	// 나의 Pawn을 찾자
+	ANetTpsCharacter* myPlayer = Cast<ANetTpsCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	myPlayer->ServerRPC_SendChat(chatContent);
+}
+
+void UMainWidget::AddChat(FString chat)
+{
 	// ChatItem 만들어서 내용 추가하자.
 	UChatItemWidget* chatItem = CreateWidget<UChatItemWidget>(GetWorld(), chatItemFactory);
 	scroll_ChatList->AddChild(chatItem);
-	chatItem->SetChat(chatContent);
+	chatItem->SetChat(chat);
 }
 
 void UMainWidget::ShowPistolUI(bool isShow)

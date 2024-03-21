@@ -53,6 +53,7 @@ public:
 	class UButton* btn_Send;
 	UFUNCTION()
 	void OnClickSend();
+	void AddChat(FString chat);
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UChatItemWidget> chatItemFactory;

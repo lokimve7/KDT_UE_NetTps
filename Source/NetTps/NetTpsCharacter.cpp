@@ -311,6 +311,18 @@ void ANetTpsCharacter::ShowCursor()
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 }
 
+void ANetTpsCharacter::ServerRPC_SendChat_Implementation(const FString& chat)
+{
+	MultiRPC_ReceiveChat(chat);
+}
+
+void ANetTpsCharacter::MultiRPC_ReceiveChat_Implementation(const FString& chat)
+{
+	// 나의 Pawn을 찾자
+	ANetTpsCharacter* myPlayer = Cast<ANetTpsCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	myPlayer->mainWidget->AddChat(chat);
+}
+
 //void ANetTpsCharacter::OnRep_NickName()
 //{
 //	UPlayerNameWidget* widget = Cast<UPlayerNameWidget>(compName->GetWidget());
