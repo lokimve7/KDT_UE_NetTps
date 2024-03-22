@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MainWidget.h"
@@ -20,9 +20,9 @@ void UMainWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// ´Ù½ÃÇÏ±â ¹öÆ° ´©¸£¸é ½ÇÇàµÇ´Â ÇÔ¼ö µî·Ï
+	// ë‹¤ì‹œí•˜ê¸° ë²„íŠ¼ ëˆ„ë¥´ë©´ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜ ë“±ë¡
 	btn_Retry->OnClicked.AddDynamic(this, &UMainWidget::OnRetry);
-	// Ã¤ÆÃ º¸³»±â ÇÔ¼ö µî·Ï
+	// ì±„íŒ… ë³´ë‚´ê¸° í•¨ìˆ˜ ë“±ë¡
 	btn_Send->OnClicked.AddDynamic(this, &UMainWidget::OnClickSend);
 }
 
@@ -32,15 +32,15 @@ void UMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	if (isShowDamageUI)
 	{
-		// µ¥¹ÌÁö UI ¸¦ ¼­¼­È÷ º¸ÀÌÁö ¾Ê°Ô ÇÏÀÚ.	
-		// 1. currOpacity ¸¦ ÁÙ¾îµé°Ô ÇÏÀÚ
+		// ë°ë¯¸ì§€ UI ë¥¼ ì„œì„œíˆ ë³´ì´ì§€ ì•Šê²Œ í•˜ì.	
+		// 1. currOpacity ë¥¼ ì¤„ì–´ë“¤ê²Œ í•˜ì
 		currOpacity -= InDeltaTime;
-		// 2. ±× °ªÀ» µ¥¹ÌÁö UI ÀÇ opacity °ªÀ¸·Î ¼³Á¤
+		// 2. ê·¸ ê°’ì„ ë°ë¯¸ì§€ UI ì˜ opacity ê°’ìœ¼ë¡œ ì„¤ì •
 		damageUI->SetRenderOpacity(currOpacity);
-		// 3. currOpacity °¡ 0º¸´Ù °°°Å³ª ÀÛ¾ÆÁö¸é
+		// 3. currOpacity ê°€ 0ë³´ë‹¤ ê°™ê±°ë‚˜ ì‘ì•„ì§€ë©´
 		if (currOpacity <= 0)
 		{
-			// 4. µ¥¹ÌÁö UI ¸¦ ¾Èº¸ÀÌ°Ô ÇÏÀÚ
+			// 4. ë°ë¯¸ì§€ UI ë¥¼ ì•ˆë³´ì´ê²Œ í•˜ì
 			isShowDamageUI = false;
 		}
 	}	
@@ -48,9 +48,9 @@ void UMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UMainWidget::OnClickSend()
 {
-	// ³»°¡ Ã¤ÆÃ ÀÔ·ÂÇÑ ³»¿ë
+	// ë‚´ê°€ ì±„íŒ… ì…ë ¥í•œ ë‚´ìš©
 	FString chatContent = edit_Chat->GetText().ToString();
-	// Ã¤ÆÃ ³»¿ëÀÌ ¾øÀ¸¸é ÇÔ¼ö ³ª°¡ÀÚ
+	// ì±„íŒ… ë‚´ìš©ì´ ì—†ìœ¼ë©´ í•¨ìˆ˜ ë‚˜ê°€ì
 	if(chatContent.IsEmpty()) return;
 
 	auto playerState = UGameplayStatics::GetPlayerState(GetWorld(), 0);
@@ -58,18 +58,18 @@ void UMainWidget::OnClickSend()
 		TEXT("[%s] : %s"), 
 		*playerState->GetPlayerName(), *chatContent);
 
-	// edit_Chat ÀÇ ³»¿ëÀ» Áö¿ìÀÚ
+	// edit_Chat ì˜ ë‚´ìš©ì„ ì§€ìš°ì
 	edit_Chat->SetText(FText());	
 
-	// ¼­¹öÇÑÅ× chat ³»¿ëÀ» Àü´ŞÇÏÀÚ.
-	// ³ªÀÇ PawnÀ» Ã£ÀÚ
+	// ì„œë²„í•œí…Œ chat ë‚´ìš©ì„ ì „ë‹¬í•˜ì.
+	// ë‚˜ì˜ Pawnì„ ì°¾ì
 	ANetTpsCharacter* myPlayer = Cast<ANetTpsCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	myPlayer->ServerRPC_SendChat(chatContent);
+	myPlayer->ServerRPC_SendChat(chat);
 }
 
 void UMainWidget::AddChat(FString chat)
 {
-	// ChatItem ¸¸µé¾î¼­ ³»¿ë Ãß°¡ÇÏÀÚ.
+	// ChatItem ë§Œë“¤ì–´ì„œ ë‚´ìš© ì¶”ê°€í•˜ì.
 	UChatItemWidget* chatItem = CreateWidget<UChatItemWidget>(GetWorld(), chatItemFactory);
 	scroll_ChatList->AddChild(chatItem);
 	chatItem->SetChat(chat);
@@ -92,17 +92,17 @@ void UMainWidget::ShowPistolUI(bool isShow)
 void UMainWidget::AddBullet()
 {
 	
-	// ÃÑ¾Ë À§Á¬ »ı¼º
+	// ì´ì•Œ ìœ„ì ¯ ìƒì„±
 	UUserWidget* bullet = CreateWidget(GetWorld(), bulletFactory);
-	// »ı¼ºµÈ ÃÑ¾Ë À§Á¬À» bulletPanel Ãß°¡ÇÏÀÚ
+	// ìƒì„±ëœ ì´ì•Œ ìœ„ì ¯ì„ bulletPanel ì¶”ê°€í•˜ì
 	bulletPanel->AddChildToHorizontalBox(bullet);
 }
 
 void UMainWidget::RemoveBullet()
 {
-	// bulletPanel ÀÇ ÀÚ½ÄÀÇ °¹¼ö - 1
+	// bulletPanel ì˜ ìì‹ì˜ ê°¯ìˆ˜ - 1
 	int32 idx = bulletPanel->GetChildrenCount() - 1;
-	// idx ¹øÂ° ÀÚ½ÄÀ» Áö¿ìÀÚ
+	// idx ë²ˆì§¸ ìì‹ì„ ì§€ìš°ì
 	bulletPanel->RemoveChildAt(idx);
 }
 
@@ -116,7 +116,7 @@ void UMainWidget::ShowDamageUI()
 
 void UMainWidget::ShowGameOverUI(bool isShow)
 {
-	// PlayerController °¡Á®¿ÀÀÚ
+	// PlayerController ê°€ì ¸ì˜¤ì
 	APlayerController* pc = GetWorld()->GetFirstPlayerController();
 	pc->SetShowMouseCursor(isShow);
 
@@ -144,6 +144,6 @@ void UMainWidget::OnRetry()
 	//pc->RespawnPlayer();
 	pc->ChangeToSpectator();
 
-	// ³ª¸¦ Áö¿ìÀÚ
+	// ë‚˜ë¥¼ ì§€ìš°ì
 	RemoveFromParent();
 }
